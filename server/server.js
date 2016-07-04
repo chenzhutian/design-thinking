@@ -6,8 +6,9 @@ if (args[0] === '-production') process.env.NODE_ENV = 'production';
  * Module dependencies.
  */
 const app = require('./config/express');
-const debug = require('debug')('vislab-paper-warehouse-server:server');
+const debug = require('debug')('design-thinking:server');
 const http = require('http');
+
 /**
  * Normalize a port into a number, string, or false.
  */
@@ -30,18 +31,26 @@ function normalizePort(val) {
 /**
  * Get port from environment and store in Express.
  */
-const port = normalizePort(process.env.PORT || '10024');
+const port = normalizePort(process.env.PORT || '18888');
 app.set('port', port);
 
 /**
  * Create HTTP server.
  */
 const server = http.createServer(app);
+const io = require('socket.io')(server);
+
+
+
+/**
+ * Listen on provided port, on all network interfaces.
+ */
+server.listen(port);
 
 /**
  * Event listener for HTTP server "error" event.
  */
-function onError(error) {
+server.on('error', error => {
     if (error.syscall !== 'listen') {
         throw error;
     }
@@ -63,22 +72,22 @@ function onError(error) {
         default:
             throw error;
     }
-}
-
+});
 /**
  * Event listener for HTTP server "listening" event.
  */
-function onListening() {
+server.on('listening', () => {
     const addr = server.address();
     const bind = typeof addr === 'string'
         ? `pipe ${addr}`
         : `port ${addr.port}`;
     debug(`Listening on ${bind}`);
-}
+});
 
-/**
- * Listen on provided port, on all network interfaces.
- */
-server.listen(port);
-server.on('error', onError);
-server.on('listening', onListening);
+io.on('connection', socket => {
+    console.log('a user connected');
+    socket.on('disconnect', () => {
+        console.log('user disconnected');
+    });
+});
+

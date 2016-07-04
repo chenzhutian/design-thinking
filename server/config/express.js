@@ -7,16 +7,15 @@ const bodyParser = require('body-parser');
 const cors = require('cors');
 const app = express();
 
-const mongoose = require('mongoose');
-const mongoPort = app.get('env') === 'development' ? 27017 : 27017;
-console.log(app.get('env'));
-mongoose.connect(`mongodb://localhost:${mongoPort}/vastchallenge2016`);
+// const mongoose = require('mongoose');
+// const mongoPort = app.get('env') === 'development' ? 27017 : 27017;
+// mongoose.connect(`mongodb://localhost:${mongoPort}/vastchallenge2016`);
 
-const db = mongoose.connection;
-db.on('error', console.error.bind(console, 'connection error:'));
-db.once('open', () => {
-    console.log('we are connect to db');
-});
+// const db = mongoose.connection;
+// db.on('error', console.error.bind(console, 'connection error:'));
+// db.once('open', () => {
+//     console.info('we are connect to db');
+// });
 
 // uncomment after placing your favicon in /public
 // app.use(favicon(path.join(__dirname, 'public', 'favicon.ico')));
@@ -31,10 +30,10 @@ if (app.get('env') === 'development') {
 }
 
 // router here
-const fetchData = require('../app/routes/fetch');
+// const fetchData = require('../app/routes/fetch');
 // app.use('/resource', express.static(path.join(__dirname, '../resource')));
 app.use(express.static(path.join(__dirname, '../public')));
-app.use('/fetch', fetchData);
+// app.use('/fetch', fetchData);
 
 // handle fallback for HTML5 history API
 app.use(require('connect-history-api-fallback')());

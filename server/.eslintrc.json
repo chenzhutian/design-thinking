@@ -1,4 +1,5 @@
 {
+    "root": true,
     "extends": "airbnb/base",
     "rules": {
         "semi": 2,
@@ -19,6 +20,16 @@
             "error",
             {
                 "args": "none"
+            }
+        ],
+        "no-console": [
+            "error",
+            {
+                "allow": [
+                    "warn",
+                    "error",
+                    "info"
+                ]
             }
         ]
     }
