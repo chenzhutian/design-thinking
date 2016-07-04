@@ -1,0 +1,28 @@
+{
+  "name": "design-thinking-server",
+  "version": "0.5.0",
+  "private": true,
+  "scripts": {
+    "dev": "node server.js",
+    "prod": "node server.js -production"
+  },
+  "dependencies": {
+    "async": "^2.0.0-rc.3",
+    "body-parser": "~1.15.0",
+    "connect-history-api-fallback": "^1.2.0",
+    "cookie-parser": "~1.4.1",
+    "debug": "~2.2.0",
+    "express": "~4.13.4",
+    "mongodb": "^2.1.16",
+    "mongoose": "^4.4.13",
+    "morgan": "~1.7.0",
+    "multer": "^1.1.0",
+    "serve-favicon": "~2.3.0"
+  },
+  "devDependencies": {
+    "cors": "^2.7.1",
+    "eslint": "^2.8.0",
+    "eslint-config-airbnb": "^8.0.0",
+    "eslint-plugin-import": "^1.5.0"
+  }
+}
