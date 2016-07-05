@@ -1,13 +1,12 @@
-#!/usr/bin/env node
 // set env
 const args = process.argv.slice(2);
 if (args[0] === '-production') process.env.NODE_ENV = 'production';
 /**
  * Module dependencies.
  */
-const app = require('./config/express');
-const debug = require('debug')('design-thinking:server');
-const http = require('http');
+import app from './server/express';
+import * as http from 'http';
+// const http = require('http');
 
 /**
  * Normalize a port into a number, string, or false.
@@ -38,9 +37,8 @@ app.set('port', port);
  * Create HTTP server.
  */
 const server = http.createServer(app);
-const io = require('socket.io')(server);
-
-
+const io = require('./config/socket');
+io.attach(server);
 
 /**
  * Listen on provided port, on all network interfaces.
@@ -81,13 +79,8 @@ server.on('listening', () => {
     const bind = typeof addr === 'string'
         ? `pipe ${addr}`
         : `port ${addr.port}`;
-    debug(`Listening on ${bind}`);
+    console.info(`Listening on ${bind}`);
 });
 
-io.on('connection', socket => {
-    console.log('a user connected');
-    socket.on('disconnect', () => {
-        console.log('user disconnected');
-    });
-});
+
 

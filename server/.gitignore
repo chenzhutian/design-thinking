@@ -26,3 +26,5 @@ coverage
 # Benchmarkin
 benchmarks/graphs
 resource/
+
+dist
