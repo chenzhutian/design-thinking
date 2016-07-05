@@ -1,0 +1,55 @@
+{
+    "root": true,
+    "extends": "airbnb/base",
+    "parserOptions": {
+        "ecmaVersion": 7,
+        "sourceType": "module",
+        "ecmaFeatures": {
+            "classes": true,
+            "experimentalObjectRestSpread": true
+        }
+    },
+    "plugins": [
+        "html"
+    ],
+    "rules": {
+        "indent": [
+            2,
+            4,
+            {
+                "SwitchCase": 1
+            }
+        ],
+        "no-param-reassign": [
+            "error",
+            {
+                "props": false
+            }
+        ],
+        "no-unused-vars": [
+            "error",
+            {
+                "args": "none"
+            }
+        ],
+        "no-console": [
+            "error",
+            {
+                "allow": [
+                    "warn",
+                    "error"
+                ]
+            }
+        ]
+    },
+    "globals": {
+        "__DEVELOPMENT__": true
+    },
+    "settings": {
+        "import/resolver": {
+            "webpack": {
+                "config": "/build/webpack.base.conf.js"
+            }
+        }
+    }
+}
