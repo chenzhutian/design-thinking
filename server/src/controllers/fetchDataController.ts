@@ -1,5 +1,4 @@
-const BuildingData = require('../models/buildingData');
-
+import BuildingData from '../models/buildingData';
 function fetchBuildingData(featureName, callback) {
     if (typeof featureName !== 'string') {
         callback(null, []);
@@ -11,6 +10,6 @@ function fetchBuildingData(featureName, callback) {
         .exec(callback);
 }
 
-module.exports = {
-    fetchBuildingData,
-};
+export default {
+    fetchBuildingData
+}

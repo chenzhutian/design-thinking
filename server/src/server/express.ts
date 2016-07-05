@@ -7,7 +7,7 @@ import * as bodyParser from 'body-parser';
 import * as cookieParser from 'cookie-parser';
 
 class serverError extends Error {
-    public status : number;
+    public status: number;
 }
 
 // const path = require('path');
@@ -61,23 +61,11 @@ app.use((req, res, next) => {
 // error handlers
 // development error handler
 // will print stacktrace
-if (app.get('env') === 'development') {
-    app.use((err: serverError, req: express.Request, res: express.Response) => {
-        res.status(err.status || 500);
-        res.render('error', {
-            message: err.message,
-            error: err,
-        });
-    });
-}
-
-// production error handler
-// no stacktraces leaked to user
 app.use((err: serverError, req: express.Request, res: express.Response) => {
     res.status(err.status || 500);
     res.render('error', {
         message: err.message,
-        error: {},
+        error: __DEVELOPMENT__ ? err : {},
     });
 });
 

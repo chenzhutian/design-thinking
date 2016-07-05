@@ -1,6 +1,7 @@
-const express = require('express');
-const router = new express.Router();
-const fetchController = require('../controllers/fetchDataController');
+import * as express from 'express';
+import fetchController from '../controllers/fetchDataController';
+const router = express.Router();
+
 
 /* GET users listing. */
 router.get('/building', (req, res) => {
@@ -12,4 +13,4 @@ router.get('/building', (req, res) => {
     });
 });
 
-module.exports = router;
+export default router;

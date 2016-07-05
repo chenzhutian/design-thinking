@@ -1,4 +1,4 @@
-const mongoose = require('mongoose');
+import * as mongoose from 'mongoose';
 const buildingDataSchema = new mongoose.Schema({
     featureName: String,
     category: String,
@@ -8,4 +8,4 @@ const buildingDataSchema = new mongoose.Schema({
     }],
 }, { collection: 'building', timestamps: true });
 
-module.exports = mongoose.model('BuildingData', buildingDataSchema);
+export default mongoose.model('BuildingData', buildingDataSchema);
