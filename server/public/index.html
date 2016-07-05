@@ -60,11 +60,16 @@
     <script src="/socket.io/socket.io.js"></script>
     <script src="http://code.jquery.com/jquery-1.11.1.js"></script>
     <script>
-        var socket = new io('/test')
-        const roomName = 'Aroom';
-        socket.emit('login', roomName);
+        var socket = new io('/ALBUMN');
+        let loginParams = {userType:'parent', roomName:'test'};
+        socket.emit('login',loginParams);
+
         $('form').submit(function() {
-            socket.emit('chat message', $('#m').val());
+            // console.log(inputValue);
+            const inputValue = $('#m').val();
+
+            socket.emit('chat message',inputValue);
+            
             $('#m').val('');
             return false;
         });

@@ -44,7 +44,7 @@ if (__DEVELOPMENT__) {
 // router here
 // const fetchData = require('../app/routes/fetch');
 // app.use('/resource', express.static(path.join(__dirname, '../resource')));
-const staticPath = __DEVELOPMENT__ ? path.join(__dirname, '../public') : './public';
+const staticPath = __DEVELOPMENT__ ? path.join(__dirname, '../../public') : './public';
 app.use(express.static(staticPath));
 // app.use('/fetch', fetchData);
 
