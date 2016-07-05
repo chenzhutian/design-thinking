@@ -1,8 +1,9 @@
 const Socket = require('socket.io');
 const myRoomName = 'Aroom';
 function attachIO(server):SocketIO.Server {
-    const io = new Socket(server);
+    const io:SocketIO.Server = new Socket(server);
     io.of('/test').on('connection', socket => {
+        
         console.info('a user connected');
         // login
         socket.on('login', roomName => {

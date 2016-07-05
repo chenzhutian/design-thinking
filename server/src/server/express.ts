@@ -6,6 +6,10 @@ import * as cors from 'cors';
 import * as bodyParser from 'body-parser';
 import * as cookieParser from 'cookie-parser';
 
+class serverError extends Error {
+    public status : number;
+}
+
 // const path = require('path');
 // const favicon = require('serve-favicon');
 // const logger = require('morgan');
@@ -49,8 +53,8 @@ app.use(require('connect-history-api-fallback')());
 
 // catch 404 and forward to error handler
 app.use((req, res, next) => {
-    const err = new Error('Not Found');
-    err['status'] = 404;
+    const err = new serverError('Not Found');
+    err.status = 404;
     next(err);
 });
 
@@ -58,7 +62,7 @@ app.use((req, res, next) => {
 // development error handler
 // will print stacktrace
 if (app.get('env') === 'development') {
-    app.use((err, req, res) => {
+    app.use((err: serverError, req: express.Request, res: express.Response) => {
         res.status(err.status || 500);
         res.render('error', {
             message: err.message,
@@ -69,7 +73,7 @@ if (app.get('env') === 'development') {
 
 // production error handler
 // no stacktraces leaked to user
-app.use((err, req, res) => {
+app.use((err: serverError, req: express.Request, res: express.Response) => {
     res.status(err.status || 500);
     res.render('error', {
         message: err.message,

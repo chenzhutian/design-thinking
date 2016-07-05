@@ -15,7 +15,6 @@ Desktop.ini
 
 # npm
 node_modules
-typings
 *.log
 *.gz
 
@@ -27,4 +26,5 @@ coverage
 benchmarks/graphs
 resource/
 
+typings
 dist
