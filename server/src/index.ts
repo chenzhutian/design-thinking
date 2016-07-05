@@ -4,8 +4,9 @@ if (args[0] === '-production') process.env.NODE_ENV = 'production';
 /**
  * Module dependencies.
  */
-import app from './server/express';
 import * as http from 'http';
+import { attachIO } from './server/socket';
+import app from './server/express';
 // const http = require('http');
 
 /**
@@ -37,8 +38,7 @@ app.set('port', port);
  * Create HTTP server.
  */
 const server = http.createServer(app);
-const io = require('./config/socket');
-io.attach(server);
+attachIO(server);
 
 /**
  * Listen on provided port, on all network interfaces.

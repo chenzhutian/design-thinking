@@ -1,6 +1,6 @@
 const Socket = require('socket.io');
 const myRoomName = 'Aroom';
-function attach(server) {
+function attachIO(server):SocketIO.Server {
     const io = new Socket(server);
     io.of('/test').on('connection', socket => {
         console.info('a user connected');
@@ -27,6 +27,4 @@ function attach(server) {
     return io;
 }
 
-module.exports = {
-    attach,
-};
+export { attachIO };

@@ -13,6 +13,7 @@ import * as cookieParser from 'cookie-parser';
 //const bodyParser = require('body-parser');
 //const cors = require('cors');
 const app = express();
+const __DEVELOPMENT__ = app.get('env') === 'development';
 
 // const mongoose = require('mongoose');
 // const mongoPort = app.get('env') === 'development' ? 27017 : 27017;
@@ -30,7 +31,7 @@ app.use(logger('dev'));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
-if (app.get('env') === 'development') {
+if (__DEVELOPMENT__) {
     app.use(cors({
         origin: 'http://localhost:8080',
     }));
@@ -39,7 +40,8 @@ if (app.get('env') === 'development') {
 // router here
 // const fetchData = require('../app/routes/fetch');
 // app.use('/resource', express.static(path.join(__dirname, '../resource')));
-app.use(express.static(path.join(__dirname, '../public')));
+const staticPath = __DEVELOPMENT__ ? path.join(__dirname, '../public') : './public';
+app.use(express.static(staticPath));
 // app.use('/fetch', fetchData);
 
 // handle fallback for HTML5 history API
