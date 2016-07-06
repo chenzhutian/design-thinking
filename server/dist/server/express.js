@@ -1,6 +1,5 @@
 "use strict";
 const express = require('express');
-const path = require('path');
 const logger = require('morgan');
 const bodyParser = require('body-parser');
 const cookieParser = require('cookie-parser');
@@ -24,7 +23,7 @@ app.use(cookieParser());
 // router here
 // const fetchData = require('../app/routes/fetch');
 // app.use('/resource', express.static(path.join(__dirname, '../resource')));
-const staticPath = __DEVELOPMENT__ ? path.join(__dirname, '../../public') : './public';
+const staticPath = './public';
 app.use(express.static(staticPath));
 // app.use('/fetch', fetchData);
 // handle fallback for HTML5 history API
