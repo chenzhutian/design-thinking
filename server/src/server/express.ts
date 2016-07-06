@@ -1,7 +1,6 @@
 import * as express from 'express';
 import * as path from 'path';
 import * as logger from 'morgan';
-import * as cors from 'cors';
 import * as bodyParser from 'body-parser';
 import * as cookieParser from 'cookie-parser';
 import * as mongoose from 'mongoose';
@@ -28,11 +27,6 @@ app.use(logger('dev'));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
-if (__DEVELOPMENT__) {
-    app.use(cors({
-        origin: 'http://localhost:8080',
-    }));
-}
 
 // router here
 // const fetchData = require('../app/routes/fetch');
