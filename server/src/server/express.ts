@@ -12,14 +12,14 @@ class serverError extends Error {
 const app = express();
 const __DEVELOPMENT__ = app.get('env') === 'development';
 
-// const mongoPort = app.get('env') === 'development' ? 27015 : 27017;
-// mongoose.connect(`mongodb://localhost:${mongoPort}/design-thinking`);
+const mongoPort = 27017;
+mongoose.connect(`mongodb://localhost:${mongoPort}/design-thinking`);
 
-// const db = mongoose.connection;
-// db.on('error', console.error.bind(console, 'connection error:'));
-// db.once('open', () => {
-//     console.info('we are connect to db');
-// });
+const db = mongoose.connection;
+db.on('error', console.error.bind(console, 'connection error:'));
+db.once('open', () => {
+    console.info('we are connect to db');
+});
 
 // uncomment after placing your favicon in /public
 // app.use(favicon(path.join(__dirname, 'public', 'favicon.ico')));

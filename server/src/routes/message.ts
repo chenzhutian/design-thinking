@@ -39,7 +39,7 @@ router.post('/', multer(audioMulterOption).single('audioFile'), (req, res) => {
         roomName: req.body.roomName,
         userType: req.body.userType,
         isRead: false,
-        isReceive: false,
+        isReceived: false,
     }
     messageController.insertMessage(messageData, (err, result) => {
         if (err) {

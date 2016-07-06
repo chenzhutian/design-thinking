@@ -2,7 +2,12 @@ import * as Socket from 'socket.io';
 import { NS_ALBUMN} from './socket-const';
 import Decay from '../decay';
 
-enum UserType { 'parent', 'child' };
+// db
+import messageController from '../controllers/messageController';
+type UserType = "parent" | "child";
+const PARENT = "parent";
+const CHILD = "child";
+
 interface LoginParams {
     roomName: string;
     userType: UserType;
@@ -11,7 +16,7 @@ interface LoginParams {
 interface Room {
     roomName: string;
     parent: string;
-    children: string;
+    child: string;
 }
 
 interface User {
@@ -36,21 +41,34 @@ function attachIO(server): SocketIO.Server {
         // login
         socket.on('login', (params: LoginParams) => {
             console.info(params);
-            if (!params.roomName || !params.userType) {
+            if (!params.roomName) {
                 console.info('login failed');
                 return;
             }
             roomName = params.roomName;
-            userType = params.userType;
-            targetType = userType === UserType.child ? UserType.parent : UserType.child;
+            // init room if not exists
+            if (!params.userType) {
+                if (!(roomName in roomNameToRooms)) {
+                    roomNameToRooms[roomName] = { parent: socket.id, child: '', roomName };
+                    userType = PARENT;
+                    targetType = CHILD;
+                } else {
+                    roomNameToRooms[roomName].child = socket.id;
+                    userType = CHILD;
+                    targetType = PARENT;
+                }
+            } else {
+                userType = params.userType;
+                targetType = userType === CHILD ? PARENT : CHILD;
+
+                // init room if not exists
+                if (!(roomName in roomNameToRooms)) {
+                    roomNameToRooms[roomName] = { parent: '', child: '', roomName };
+                }
+                roomNameToRooms[roomName][userType] = socket.id;
+            }
 
             socketIdToUser[socket.id] = { type: userType, roomName };
-
-            // init room if not exists
-            if (!(roomName in roomNameToRooms)) {
-                roomNameToRooms[roomName] = { parent: '', children: '', roomName };
-            }
-            roomNameToRooms[roomName][userType] = socket.id;
             rooms.push(roomNameToRooms[roomName]);
 
             socket.join(roomName, joinRoomErr => {
@@ -60,21 +78,58 @@ function attachIO(server): SocketIO.Server {
         });
 
         // when receive message
-        socket.on('moveSlides', slidesIndex=>{
+        socket.on('moveSlides', slidesIndex => {
             const user = socketIdToUser[socket.id];
             const roomName = user && user.roomName;
-            console.info(slidesIndex);
-            socket.in(roomName).emit('moveSlides', slidesIndex);
+            if (user.type === PARENT) {
+                console.info('move');
+                socket.in(roomName).emit('moveSlides', slidesIndex);
+            }
         });
-        // socket.on('chat message', msg => {
-        //     console.info(`message:${msg}`);
-        //     const user = socketIdToUser[socket.id];
-        //     const roomName = user && user.roomName;
 
-        //     io.of(NS_ALBUMN).in(roomName).emit('chat message', msg);
-        // });
+        // sendMessage
+        socket.on('sendMessage', msg => {
+            const user = socketIdToUser[socket.id];
+            const roomName = user && user.roomName;
+            const room = roomNameToRooms[roomName];
+            const message = {
+                content: msg,
+                roomName,
+                userType: user.type,
+                isRead: false,
+                isReceived: false,
+            };
+            const targetType = userType === CHILD ? PARENT : CHILD;
+            if (room[targetType]) {
+                // target is connected
+                message.isReceived = true;
+                messageController.insertTextMessage(message, (err, recordId) => {
+                    if (err) throw err;
+                    socket.in(roomName).emit('message', { content: msg, id: recordId });
+                });
+            } else {
+                messageController.insertTextMessage(message, err => {
+                    if (err) throw err;
+                });
+            }
+        });
+
+        // read message
+        socket.on('message', msgIndex => {
+            const user = socketIdToUser[socket.id];
+            const roomName = user && user.roomName;
+            console.log(msgIndex);
+        });
 
         socket.on('disconnect', () => {
+            const user = socketIdToUser[socket.id];
+            if (user) {
+                const roomName = user.roomName;
+                const userType = user.type;
+                const room = roomNameToRooms[roomName];
+                room[userType] = null;
+            }
+
             console.info('user disconnected');
         });
     });
