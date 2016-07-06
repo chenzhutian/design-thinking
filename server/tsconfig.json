@@ -6,7 +6,7 @@
 		"module": "commonjs",
 		"sourceMap": true,
 		"noImplicitAny": false,
-		"removeComments": false,
+		"removeComments": true,
 		"preserveConstEnums": true,
 		"outDir": "./dist/"
 	},
