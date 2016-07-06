@@ -4,9 +4,9 @@ const path = require('path');
 module.exports = {
     assetsSubDirectory: 'static',
     build: {
-        index: path.resolve(__dirname, '../better-data-play-ground-server/public/index.html'),
-        assetsRoot: path.resolve(__dirname, '../better-data-play-ground-server/public'),
-        assetsPublicPath: '/vc-playground/',
+        index: path.resolve(__dirname, '../server/dist/public/index.html'),
+        assetsRoot: path.resolve(__dirname, '../server/dist/public'),
+        assetsPublicPath: '/',
         productionSourceMap: true,
     },
     dev: {

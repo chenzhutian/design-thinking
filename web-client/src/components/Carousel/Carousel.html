@@ -1,0 +1,18 @@
+<div class="carousel">
+    <ol class="carousel-indicators">
+        <li v-for="image in images" :class="{active: $index===currentSlideIndex }" @click="setCurrentSlide($index)"> </li>
+    </ol>
+    <div class="carousel-inner">
+        <div class="carousel-wraper" :style="carouselWraperStyle">
+            <div v-for="image in images" class="image" :class="{active:$index === currentSlideIndex}" :style="{
+          backgroundImage: `radial-gradient(60% 60%, rgba(0, 0, 0, 0.6) 0%, 
+        rgba(0, 0, 0, 0) 95%), url(${image.img})`,
+          width: `${100 /imagesCount}%`,
+        }">
+                <p>{{image.msg}}</p>
+            </div>
+        </div>
+    </div>
+    <a class="left carousel-control "></a>
+    <a class="right carousel-control "></a>
+</div>

@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "dev": "node server.js",
-    "prod": "node index.js -production",
+    "prod": "node dist/index.js -production",
     "build":"node build.js && tsc -p ."
   },
   "dependencies": {
