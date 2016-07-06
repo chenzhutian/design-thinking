@@ -45,12 +45,17 @@ function attachIO(server) {
             });
         });
         // when receive message
-        socket.on('chat message', msg => {
-            console.info(`message:${msg}`);
+        socket.on('moveSlides', slidesIndex => {
             const user = socketIdToUser[socket.id];
             const roomName = user && user.roomName;
-            io.of(socket_const_1.NS_ALBUMN).in(roomName).emit('chat message', msg);
+            socket.in(roomName).emit('moveSlides', slidesIndex);
         });
+        // socket.on('chat message', msg => {
+        //     console.info(`message:${msg}`);
+        //     const user = socketIdToUser[socket.id];
+        //     const roomName = user && user.roomName;
+        //     io.of(NS_ALBUMN).in(roomName).emit('chat message', msg);
+        // });
         socket.on('disconnect', () => {
             console.info('user disconnected');
         });
