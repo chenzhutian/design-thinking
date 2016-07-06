@@ -4,7 +4,8 @@
   "private": true,
   "scripts": {
     "dev": "node server.js",
-    "prod": "node server.js -production"
+    "prod": "node index.js -production",
+    "build":"node build.js && tsc -p ."
   },
   "dependencies": {
     "async": "^2.0.0-rc.3",
@@ -22,6 +23,7 @@
   },
   "devDependencies": {
     "cors": "^2.7.1",
+    "shelljs": "^0.7.0",
     "tslint": "^3.13.0"
   }
 }

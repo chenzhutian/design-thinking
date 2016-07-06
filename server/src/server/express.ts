@@ -1,27 +1,20 @@
-// const express = require('express');
 import * as express from 'express';
 import * as path from 'path';
 import * as logger from 'morgan';
 import * as cors from 'cors';
 import * as bodyParser from 'body-parser';
 import * as cookieParser from 'cookie-parser';
+import * as mongoose from 'mongoose';
 
 class serverError extends Error {
-    public status: number;
+    status: number;
 }
 
-// const path = require('path');
-// const favicon = require('serve-favicon');
-// const logger = require('morgan');
-// const cookieParser = require('cookie-parser');
-//const bodyParser = require('body-parser');
-//const cors = require('cors');
 const app = express();
 const __DEVELOPMENT__ = app.get('env') === 'development';
 
-// const mongoose = require('mongoose');
-// const mongoPort = app.get('env') === 'development' ? 27017 : 27017;
-// mongoose.connect(`mongodb://localhost:${mongoPort}/vastchallenge2016`);
+// const mongoPort = app.get('env') === 'development' ? 27015 : 27017;
+// mongoose.connect(`mongodb://localhost:${mongoPort}/design-thinking`);
 
 // const db = mongoose.connection;
 // db.on('error', console.error.bind(console, 'connection error:'));

@@ -1,13 +1,14 @@
 class Decay {
     // all time unit is ms
     private _initValue: number;              // N
-    private _totalPassTime: number;          // t
+    private _totalPassTime: number = 0;          // t
     private _halfLifePeriod: number = 10000; // T
     private _halfLifePeriodFactor: number = 1; //HPF
-    private _HPFreduceThreshold: number = 10;
+    private _HPFreduceThreshold: number;
 
     constructor(initValue?: number) {
         this._initValue = initValue || 1000;
+        this._HPFreduceThreshold = this._initValue * 0.1;
     }
 
     // passTime in ms
@@ -30,3 +31,5 @@ class Decay {
         ++this._halfLifePeriodFactor;
     }
 }
+
+export default Decay;

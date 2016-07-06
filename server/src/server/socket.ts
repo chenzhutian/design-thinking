@@ -1,5 +1,6 @@
-const Socket = require('socket.io');
+import * as Socket from 'socket.io';
 import { NS_ALBUMN} from './socket-const';
+import Decay from '../decay';
 
 enum UserType { 'parent', 'child' };
 interface LoginParams {
@@ -18,12 +19,13 @@ interface User {
     roomName: string;
 }
 
-
 function attachIO(server): SocketIO.Server {
-    const io: SocketIO.Server = new Socket(server);
+    const io: SocketIO.Server = Socket(server);
     const socketIdToUser: { [id: string]: User } = {};
     const roomNameToRooms: { [name: string]: Room } = {};
     const rooms: Array<Room> = [];
+    const tickInterval: number = 1000;
+    const decay = new Decay(100);
 
     // Albumn here
     io.of(NS_ALBUMN).on('connection', socket => {
@@ -71,12 +73,11 @@ function attachIO(server): SocketIO.Server {
         });
     });
 
-    let count = 0;
     setInterval(() => {
         rooms.forEach(room => {
-            io.of(NS_ALBUMN).in(room.roomName).emit('chat message', ++count);
+            io.of(NS_ALBUMN).in(room.roomName).emit('chat message', decay.decayOnce(tickInterval));
         })
-    }, 1000);
+    }, tickInterval);
 
     return io;
 }
