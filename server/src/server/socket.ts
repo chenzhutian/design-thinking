@@ -63,6 +63,7 @@ function attachIO(server): SocketIO.Server {
         socket.on('moveSlides', slidesIndex=>{
             const user = socketIdToUser[socket.id];
             const roomName = user && user.roomName;
+            console.info(slidesIndex);
             socket.in(roomName).emit('moveSlides', slidesIndex);
         });
         // socket.on('chat message', msg => {
