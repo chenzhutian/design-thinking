@@ -1,0 +1,30 @@
+{
+  "name": "design-thinking-server",
+  "version": "0.5.0",
+  "private": true,
+  "scripts": {
+    "dev": "node server.js",
+    "prod": "node dist/index.js -production",
+    "build":"node build.js && tsc -p .",
+    "deploy":"git subtree push --prefix server/dist origin dist"
+  },
+  "dependencies": {
+    "async": "^2.0.0-rc.3",
+    "body-parser": "~1.15.0",
+    "connect-history-api-fallback": "^1.2.0",
+    "cookie-parser": "~1.4.1",
+    "express": "~4.13.4",
+    "mongodb": "^2.1.16",
+    "mongoose": "^4.4.13",
+    "morgan": "~1.7.0",
+    "multer": "^1.1.0",
+    "serve-favicon": "~2.3.0",
+    "socket.io": "^1.4.8"
+  },
+  "devDependencies": {
+    "typescript": "^1.8.10",
+    "cors": "^2.7.1",
+    "shelljs": "^0.7.0",
+    "tslint": "^3.13.0"
+  }
+}
