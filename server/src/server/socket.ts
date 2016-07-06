@@ -4,7 +4,6 @@ import { NS_ALBUMN} from './socket-const';
 enum UserType { 'parent', 'child' };
 interface LoginParams {
     roomName: string;
-    userName: string;
     userType: UserType;
 }
 
@@ -19,9 +18,9 @@ interface User {
     roomName: string;
 }
 
+
 function attachIO(server): SocketIO.Server {
     const io: SocketIO.Server = new Socket(server);
-    const userNameToSocketId = {};
     const socketIdToUser: { [id: string]: User } = {};
     const roomNameToRooms: { [name: string]: Room } = {};
     const rooms: Array<Room> = [];
@@ -31,7 +30,6 @@ function attachIO(server): SocketIO.Server {
         console.info('user connect');
         let roomName;
         let targetType;
-        let userName;
         let userType;
         // login
         socket.on('login', (params: LoginParams) => {
@@ -43,13 +41,7 @@ function attachIO(server): SocketIO.Server {
             roomName = params.roomName;
             userType = params.userType;
             targetType = userType === UserType.child ? UserType.parent : UserType.child;
-            userName = params.userName || 'anamouny';
 
-            // if(userName in userNameToSocketId){ 
-            //     console.info('login fail userName exists');
-            //     return;
-            // } 
-            userNameToSocketId[params.userName] = socket.id;
             socketIdToUser[socket.id] = { type: userType, roomName };
 
             // init room if not exists
