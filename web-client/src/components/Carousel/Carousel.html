@@ -1,6 +1,6 @@
 <div class="carousel">
     <ol class="carousel-indicators">
-        <li v-for="image in images" :class="{active: $index===currentSlideIndex }" @click="setCurrentSlide($index)"> </li>
+        <li v-for="image in images" :class="{active: $index===currentSlideIndex }" @click="moveSlides($index)"> </li>
     </ol>
     <div class="carousel-inner">
         <div class="carousel-wraper" :style="carouselWraperStyle">
