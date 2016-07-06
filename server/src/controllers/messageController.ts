@@ -32,11 +32,12 @@ function insertTextMessage(message: TextMessage, callback: (err: any, res: {}) =
     });
 }
 
-// function readTextMessage(params:type) {
-
-// }
+function readTextMessage(id: string, callback: (err: any, res: {}) => void) {
+    TextMessageData.findByIdAndUpdate(id, { isRead: true }, callback);
+}
 
 export default {
     insertMessage,
     insertTextMessage,
+    readTextMessage,
 }

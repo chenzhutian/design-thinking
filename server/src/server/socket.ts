@@ -46,16 +46,24 @@ function attachIO(server): SocketIO.Server {
                 return;
             }
             roomName = params.roomName;
-            // init room if not exists
+
             if (!params.userType) {
+                // init room if not exists
                 if (!(roomName in roomNameToRooms)) {
                     roomNameToRooms[roomName] = { parent: socket.id, child: '', roomName };
                     userType = PARENT;
                     targetType = CHILD;
                 } else {
-                    roomNameToRooms[roomName].child = socket.id;
-                    userType = CHILD;
-                    targetType = PARENT;
+                    const room = roomNameToRooms[roomName];
+                    if (!room.child) {
+                        room.child = socket.id;
+                        userType = CHILD;
+                        targetType = PARENT;
+                    } else {
+                        room.parent = socket.id;
+                        userType = PARENT;
+                        targetType = CHILD;
+                    }
                 }
             } else {
                 userType = params.userType;
@@ -79,9 +87,7 @@ function attachIO(server): SocketIO.Server {
 
         // when receive message
         socket.on('moveSlides', slidesIndex => {
-            const user = socketIdToUser[socket.id];
-            const roomName = user && user.roomName;
-            if (user.type === PARENT) {
+            if (userType === PARENT) {
                 console.info('move');
                 socket.in(roomName).emit('moveSlides', slidesIndex);
             }
@@ -89,17 +95,15 @@ function attachIO(server): SocketIO.Server {
 
         // sendMessage
         socket.on('sendMessage', msg => {
-            const user = socketIdToUser[socket.id];
-            const roomName = user && user.roomName;
             const room = roomNameToRooms[roomName];
+            if (!room) return;
             const message = {
                 content: msg,
                 roomName,
-                userType: user.type,
+                userType: userType,
                 isRead: false,
                 isReceived: false,
             };
-            const targetType = userType === CHILD ? PARENT : CHILD;
             if (room[targetType]) {
                 // target is connected
                 message.isReceived = true;
@@ -115,21 +119,18 @@ function attachIO(server): SocketIO.Server {
         });
 
         // read message
-        socket.on('message', msgIndex => {
-            const user = socketIdToUser[socket.id];
-            const roomName = user && user.roomName;
-            console.log(msgIndex);
+        socket.on('readMessage', messageId => {
+            if (!messageId || !messageId.length) return;
+            messageController.readTextMessage(messageId, (err, res) => {
+                if (err) throw err;
+            });
         });
 
         socket.on('disconnect', () => {
-            const user = socketIdToUser[socket.id];
-            if (user) {
-                const roomName = user.roomName;
-                const userType = user.type;
-                const room = roomNameToRooms[roomName];
+            const room = roomNameToRooms[roomName];
+            if (room) {
                 room[userType] = null;
             }
-
             console.info('user disconnected');
         });
     });
