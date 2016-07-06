@@ -5,7 +5,8 @@
   "scripts": {
     "dev": "node server.js",
     "prod": "node dist/index.js -production",
-    "build":"node build.js && tsc -p ."
+    "build":"node build.js && tsc -p .",
+    "deploy":"git subtree push --prefix server/dist origin dist"
   },
   "dependencies": {
     "async": "^2.0.0-rc.3",

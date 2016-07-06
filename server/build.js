@@ -10,6 +10,6 @@ console.log(
 
 
 const assetsPath = './dist/';
-shelljs.rm('-rf', assetsPath);
+// shelljs.rm('-rf', assetsPath);
 shelljs.mkdir('-p', assetsPath);
 shelljs.cp('-R', 'resource/', assetsPath);
