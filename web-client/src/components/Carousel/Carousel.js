@@ -3,10 +3,13 @@ import Hammer from 'hammerjs';
 export default {
     ready() {
         this.socket = new IO('/ALBUMN');
-        this.socket.emit('login', { roomName: 'design-thinking' });
+        this.socket.on('connect', () => {
+            this.socket.emit('login', { roomName: 'design-thinking' });
+        });
         this.socket.on('moveSlides', this.setCurrentSlide);
         this.socket.on('message', this.receiveMessage);
         this.socket.on('unReadMessage', this.receiveUnReadMessage);
+        this.socket.on('decay', this.handleDecay);
         this.hammer = new Hammer(this.$els.wraper);
         this.hammer.on('swipeleft swiperight panleft panright panend pancancel',
             this.hammerHandler);
@@ -60,6 +63,9 @@ export default {
         receiveUnReadMessage(messages) {
             if (!messages) return;
             messages.forEach(this.receiveMessage);
+        },
+        handleDecay(value) {
+            console.log(value);
         },
         hammerHandler(e) {
             switch (e.type) {
