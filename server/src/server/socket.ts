@@ -84,7 +84,6 @@ function attachIO(server): SocketIO.Server {
                 console.info('join room success');
                 messageController.fetchUnReadTextMessage(targetType, (err, messages) => {
                     if (err) throw err;
-                    console.info(messages);
                     if (messages.length) {
                         socket.emit('unReadMessage', messages);
                     }
@@ -95,7 +94,6 @@ function attachIO(server): SocketIO.Server {
         // when receive message
         socket.on('moveSlides', slidesIndex => {
             if (userType === PARENT) {
-                console.info('move');
                 socket.in(roomName).emit('moveSlides', slidesIndex);
             }
         });

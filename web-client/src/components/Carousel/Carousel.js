@@ -37,7 +37,6 @@ export default {
             this.socket.emit('sendMessage', `this is a message ${Math.random()}`);
         },
         receiveMessage(message) {
-            console.log(message);
             if (message.id) {
                 this.unReadMessage.push(message);
             }
@@ -47,7 +46,6 @@ export default {
             this.socket.emit('readMessage', msg.id);
         },
         receiveUnReadMessage(messages) {
-            console.log(messages);
             if (!messages) return;
             messages.forEach(this.receiveMessage);
         },
