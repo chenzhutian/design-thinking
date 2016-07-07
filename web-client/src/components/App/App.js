@@ -1,4 +1,4 @@
-import mdl from 'material-design-lite/material.js';
+// import mdl from 'material-design-lite/material.js';
 import 'material-design-lite/src/material-design-lite.scss';
 
 // components
@@ -11,7 +11,6 @@ import image4 from '../../assets/4.jpg';
 
 export default {
     ready() {
-        mdl.upgradeDom();
         const images = [
             {
                 img: image1,

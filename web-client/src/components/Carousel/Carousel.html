@@ -1,6 +1,6 @@
 <div class="carousel">
     <ol class="carousel-indicators">
-        <li v-for="image in images" :class="{active: $index===currentSlideIndex }" @click="moveSlides($index)"> </li>
+        <li v-for="image in images" :class="{active: $index===currentSlideIndex }" @click="moveSlides($index)"></li>
     </ol>
     <div class="carousel-inner">
         <div class="carousel-wraper" :style="carouselWraperStyle">
@@ -13,6 +13,11 @@
             </div>
         </div>
     </div>
-    <a class="left carousel-control "></a>
-    <a class="right carousel-control "></a>
+    <!--<a class="left carousel-control "></a>
+    <a class="right carousel-control "></a>-->
+    <button @click="sendMessage">Send</button>
+    <button @click="readMessage">Listen</button>
+    <ul id="messages">
+        <li v-for="msg in unReadMessage">{{msg.content}}</li>
+    </ul>
 </div>
