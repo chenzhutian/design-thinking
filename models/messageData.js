@@ -5,7 +5,7 @@ const messageDataSchema = new mongoose.Schema({
     roomName: String,
     userType: String,
     isRead: Boolean,
-    isReceive: Boolean,
+    isReceived: Boolean,
 }, { collection: 'message', timestamps: true });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.default = mongoose.model('Message', messageDataSchema);

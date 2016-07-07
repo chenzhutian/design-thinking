@@ -3,40 +3,30 @@ const express = require('express');
 const logger = require('morgan');
 const bodyParser = require('body-parser');
 const cookieParser = require('cookie-parser');
+const mongoose = require('mongoose');
 class serverError extends Error {
 }
 const app = express();
 const __DEVELOPMENT__ = app.get('env') === 'development';
-// const mongoPort = app.get('env') === 'development' ? 27015 : 27017;
-// mongoose.connect(`mongodb://localhost:${mongoPort}/design-thinking`);
-// const db = mongoose.connection;
-// db.on('error', console.error.bind(console, 'connection error:'));
-// db.once('open', () => {
-//     console.info('we are connect to db');
-// });
-// uncomment after placing your favicon in /public
-// app.use(favicon(path.join(__dirname, 'public', 'favicon.ico')));
+const mongoPort = 27017;
+mongoose.connect(`mongodb://localhost:${mongoPort}/design-thinking`);
+const db = mongoose.connection;
+db.on('error', console.error.bind(console, 'connection error:'));
+db.once('open', () => {
+    console.info('we are connect to db');
+});
 app.use(logger('dev'));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
-// router here
-// const fetchData = require('../app/routes/fetch');
-// app.use('/resource', express.static(path.join(__dirname, '../resource')));
 const staticPath = './public';
 app.use(express.static(staticPath));
-// app.use('/fetch', fetchData);
-// handle fallback for HTML5 history API
 app.use(require('connect-history-api-fallback')());
-// catch 404 and forward to error handler
 app.use((req, res, next) => {
     const err = new serverError('Not Found');
     err.status = 404;
     next(err);
 });
-// error handlers
-// development error handler
-// will print stacktrace
 app.use((err, req, res) => {
     res.status(err.status || 500);
     res.render('error', {

@@ -2,12 +2,9 @@
 const Socket = require('socket.io');
 const socket_const_1 = require('./socket-const');
 const decay_1 = require('../decay');
-var UserType;
-(function (UserType) {
-    UserType[UserType['parent'] = 0] = 'parent';
-    UserType[UserType['child'] = 1] = 'child';
-})(UserType || (UserType = {}));
-;
+const messageController_1 = require('../controllers/messageController');
+const PARENT = "parent";
+const CHILD = "child";
 function attachIO(server) {
     const io = Socket(server);
     const socketIdToUser = {};
@@ -15,49 +12,107 @@ function attachIO(server) {
     const rooms = [];
     const tickInterval = 1000;
     const decay = new decay_1.default(100);
-    // Albumn here
     io.of(socket_const_1.NS_ALBUMN).on('connection', socket => {
         console.info('user connect');
         let roomName;
         let targetType;
         let userType;
-        // login
         socket.on('login', (params) => {
             console.info(params);
-            if (!params.roomName || !params.userType) {
+            if (!params.roomName) {
                 console.info('login failed');
                 return;
             }
             roomName = params.roomName;
-            userType = params.userType;
-            targetType = userType === UserType.child ? UserType.parent : UserType.child;
-            socketIdToUser[socket.id] = { type: userType, roomName: roomName };
-            // init room if not exists
-            if (!(roomName in roomNameToRooms)) {
-                roomNameToRooms[roomName] = { parent: '', children: '', roomName: roomName };
+            if (!params.userType) {
+                if (!(roomName in roomNameToRooms)) {
+                    roomNameToRooms[roomName] = { parent: socket.id, child: '', roomName: roomName };
+                    userType = PARENT;
+                    targetType = CHILD;
+                }
+                else {
+                    const room = roomNameToRooms[roomName];
+                    if (!room.child) {
+                        room.child = socket.id;
+                        userType = CHILD;
+                        targetType = PARENT;
+                    }
+                    else {
+                        room.parent = socket.id;
+                        userType = PARENT;
+                        targetType = CHILD;
+                    }
+                }
             }
-            roomNameToRooms[roomName][userType] = socket.id;
+            else {
+                userType = params.userType;
+                targetType = userType === CHILD ? PARENT : CHILD;
+                if (!(roomName in roomNameToRooms)) {
+                    roomNameToRooms[roomName] = { parent: '', child: '', roomName: roomName };
+                }
+                roomNameToRooms[roomName][userType] = socket.id;
+            }
+            socketIdToUser[socket.id] = { type: userType, roomName: roomName };
             rooms.push(roomNameToRooms[roomName]);
             socket.join(roomName, joinRoomErr => {
                 if (joinRoomErr)
                     throw joinRoomErr;
                 console.info('join room success');
+                messageController_1.default.fetchUnReadTextMessage(targetType, (err, messages) => {
+                    if (err)
+                        throw err;
+                    console.info(messages);
+                    if (messages.length) {
+                        socket.emit('unReadMessage', messages);
+                    }
+                });
             });
         });
-        // when receive message
         socket.on('moveSlides', slidesIndex => {
-            const user = socketIdToUser[socket.id];
-            const roomName = user && user.roomName;
-            console.info(slidesIndex);
-            socket.in(roomName).emit('moveSlides', slidesIndex);
+            if (userType === PARENT) {
+                console.info('move');
+                socket.in(roomName).emit('moveSlides', slidesIndex);
+            }
         });
-        // socket.on('chat message', msg => {
-        //     console.info(`message:${msg}`);
-        //     const user = socketIdToUser[socket.id];
-        //     const roomName = user && user.roomName;
-        //     io.of(NS_ALBUMN).in(roomName).emit('chat message', msg);
-        // });
+        socket.on('sendMessage', msg => {
+            const room = roomNameToRooms[roomName];
+            if (!room)
+                return;
+            const message = {
+                content: msg,
+                roomName: roomName,
+                userType: userType,
+                isRead: false,
+                isReceived: false,
+            };
+            if (room[targetType]) {
+                message.isReceived = true;
+                messageController_1.default.insertTextMessage(message, (err, recordId) => {
+                    if (err)
+                        throw err;
+                    socket.in(roomName).emit('message', { content: msg, id: recordId });
+                });
+            }
+            else {
+                messageController_1.default.insertTextMessage(message, err => {
+                    if (err)
+                        throw err;
+                });
+            }
+        });
+        socket.on('readMessage', messageId => {
+            if (!messageId || !messageId.length)
+                return;
+            messageController_1.default.readTextMessage(messageId, (err, res) => {
+                if (err)
+                    throw err;
+            });
+        });
         socket.on('disconnect', () => {
+            const room = roomNameToRooms[roomName];
+            if (room) {
+                room[userType] = null;
+            }
             console.info('user disconnected');
         });
     });
