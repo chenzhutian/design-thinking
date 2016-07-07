@@ -4,12 +4,13 @@
     </ol>
     <div class="carousel-inner">
         <div class="carousel-wraper" :class="wraperTransition" :style="carouselWraperStyle" v-el:wraper>
-            <div v-for="image in images" class="image" :class="{active:$index === currentSlideIndex}" :style="{
-          backgroundImage: `radial-gradient(60% 60%, rgba(0, 0, 0, 0.6) 0%, 
-        rgba(0, 0, 0, 0) 95%), url(${image.img})`,
-          width: `${100 /imagesCount}%`,
-        }">
-                <p>{{image.msg}}</p>
+            <div v-for="(imageIndex, image) in images" class="image" :class="{active:$index === currentSlideIndex}" :style="{
+width: `${100 /imagesCount}%`
+            }">
+                <div v-for="(componentIndex,componentSrc) in image.components" class="image-component" :style="imageComponentsStyle[imageIndex][componentIndex]">
+                    <!--<canvas id="canvas-{{$index}}"></canvas>-->
+                    <p>{{image.msg}}</p>
+                </div>
             </div>
         </div>
     </div>

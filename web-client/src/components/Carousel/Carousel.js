@@ -20,6 +20,7 @@ export default {
         return {
             currentSlideIndex: 0,
             images: [],
+            imageComponentsStyle: [],
             imagesCount: 0,
             wraperTransition: { transition: true },
             carouselWraperStyle: { left: '0%', width: 0 },
@@ -31,10 +32,38 @@ export default {
     methods: {
         setData(images) {
             this.images = images;
+            this.images.forEach((image, index) => {
+                const componentStyle = [];
+                image.components.forEach(componentSrc => {
+                    componentStyle.push({
+                        opacity: 1,
+                        backgroundImage: `radial-gradient(60% 60%, rgba(0, 0, 0, 0.6) 0%,
+                        rgba(0, 0, 0, 0) 95%), url(${componentSrc})`,
+                    });
+                });
+                this.imageComponentsStyle.push(componentStyle);
+            });
             this.imagesCount = this.images.length;
             this.carouselWraperStyle.width = `${100 * this.imagesCount}%`;
             this.$nextTick(() => {
                 this.slideWidth = this.$els.wraper.clientWidth / this.imagesCount;
+                // this.drawImagesToCanvas();
+            });
+        },
+        drawImagesToCanvas() {
+            this.images.forEach((image, index) => {
+                const canvas = this.$els.wraper.querySelector(`#canvas-${index}`);
+                const ctx = canvas.getContext('2d');
+                const img = new Image();
+                // drawing of the test image - img1
+                img.onload = function () {
+                    // draw background image
+                    ctx.drawImage(img, 0, 0);
+                    // draw a box over the top
+                    // ctx.fillStyle = 'rgba(200, 0, 0, 0.5)';
+                    ctx.fillRect(0, 0, 500, 500);
+                };
+                img.src = image.img;
             });
         },
         setCurrentSlide(index) {
@@ -49,6 +78,7 @@ export default {
             this.socket.emit('moveSlides', index);
         },
         sendMessage() {
+            this.imageComponentsStyle[4][1].opacity -= 0.1;
             this.socket.emit('sendMessage', `this is a message ${Math.random()}`);
         },
         receiveMessage(message) {
@@ -57,6 +87,7 @@ export default {
             }
         },
         readMessage() {
+            this.imageComponentsStyle[4][1].opacity += 0.1;
             const msg = this.unReadMessage.shift();
             this.socket.emit('readMessage', msg.id);
         },

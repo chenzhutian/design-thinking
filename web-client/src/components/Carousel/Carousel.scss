@@ -43,14 +43,20 @@
             .image {
                 position: relative;
                 height: 100%;
-                background-size: cover;
-                background-position: center center;
                 display: inline-block;
-                p {
-                    vertical-align: middle;
-                    padding: 5%;
-                    font-size: 4em;
-                    text-align: center;
+                .image-component {
+                    width: 100%;
+                    height: 100%;
+                    position: absolute;
+                    left: 0;
+                    background-size: cover;
+                    background-position: center center;
+                    p {
+                        vertical-align: middle;
+                        padding: 5%;
+                        font-size: 4em;
+                        text-align: center;
+                    }
                 }
             }
             .image.active {
