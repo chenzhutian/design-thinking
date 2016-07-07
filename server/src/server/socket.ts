@@ -82,6 +82,13 @@ function attachIO(server): SocketIO.Server {
             socket.join(roomName, joinRoomErr => {
                 if (joinRoomErr) throw joinRoomErr;
                 console.info('join room success');
+                messageController.fetchUnReadTextMessage(targetType, (err, messages) => {
+                    if (err) throw err;
+                    console.info(messages);
+                    if (messages.length) {
+                        socket.emit('unReadMessage', messages);
+                    }
+                });
             });
         });
 
