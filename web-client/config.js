@@ -8,6 +8,7 @@ module.exports = {
         assetsRoot: path.resolve(__dirname, '../server/dist/public'),
         assetsPublicPath: '/',
         productionSourceMap: true,
+        productionGzipExtensions: ['js', 'css'],
     },
     dev: {
         port: 8080,
