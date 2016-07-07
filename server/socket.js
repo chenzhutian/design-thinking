@@ -11,7 +11,7 @@ function attachIO(server) {
     const roomNameToRooms = {};
     const rooms = [];
     const tickInterval = 1000;
-    const decay = new decay_1.default(100);
+    const decayInitvalue = 100;
     io.of(socket_const_1.NS_ALBUMN).on('connection', socket => {
         console.info('user connect');
         let roomName;
@@ -26,7 +26,7 @@ function attachIO(server) {
             roomName = params.roomName;
             if (!params.userType) {
                 if (!(roomName in roomNameToRooms)) {
-                    roomNameToRooms[roomName] = { parent: socket.id, child: '', roomName: roomName };
+                    roomNameToRooms[roomName] = { parent: socket.id, child: '', roomName: roomName, decayManager: new decay_1.default(decayInitvalue) };
                     userType = PARENT;
                     targetType = CHILD;
                 }
@@ -48,7 +48,7 @@ function attachIO(server) {
                 userType = params.userType;
                 targetType = userType === CHILD ? PARENT : CHILD;
                 if (!(roomName in roomNameToRooms)) {
-                    roomNameToRooms[roomName] = { parent: '', child: '', roomName: roomName };
+                    roomNameToRooms[roomName] = { parent: '', child: '', roomName: roomName, decayManager: new decay_1.default(decayInitvalue) };
                 }
                 roomNameToRooms[roomName][userType] = socket.id;
             }
@@ -61,7 +61,6 @@ function attachIO(server) {
                 messageController_1.default.fetchUnReadTextMessage(targetType, (err, messages) => {
                     if (err)
                         throw err;
-                    console.info(messages);
                     if (messages.length) {
                         socket.emit('unReadMessage', messages);
                     }
@@ -70,7 +69,6 @@ function attachIO(server) {
         });
         socket.on('moveSlides', slidesIndex => {
             if (userType === PARENT) {
-                console.info('move');
                 socket.in(roomName).emit('moveSlides', slidesIndex);
             }
         });
@@ -116,9 +114,10 @@ function attachIO(server) {
             console.info('user disconnected');
         });
     });
-    setInterval(() => {
+    const timer = setInterval(() => {
         rooms.forEach(room => {
-            io.of(socket_const_1.NS_ALBUMN).in(room.roomName).emit('chat message', decay.decayOnce(tickInterval));
+            const decayManager = room.decayManager;
+            io.of(socket_const_1.NS_ALBUMN).in(room.roomName).emit('decay', decayManager.decayOnce(tickInterval));
         });
     }, tickInterval);
     return io;
