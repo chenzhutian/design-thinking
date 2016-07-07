@@ -78,11 +78,11 @@ export default {
             this.socket.emit('moveSlides', index);
         },
         sendMessage() {
-            this.imageComponentsStyle[4][1].opacity -= 0.1;
             this.socket.emit('sendMessage', `this is a message ${Math.random()}`);
         },
         receiveMessage(message) {
             if (message.id) {
+                this.imageComponentsStyle[4][1].opacity -= 0.1;
                 this.unReadMessage.push(message);
             }
         },
