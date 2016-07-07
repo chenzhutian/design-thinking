@@ -1,13 +1,12 @@
 "use strict";
 class Decay {
     constructor(initValue) {
-        this._totalPassTime = 0; // t
-        this._halfLifePeriod = 10000; // T
-        this._halfLifePeriodFactor = 1; //HPF
+        this._totalPassTime = 0;
+        this._halfLifePeriod = 10000;
+        this._halfLifePeriodFactor = 1;
         this._initValue = initValue || 1000;
         this._HPFreduceThreshold = this._initValue * 0.1;
     }
-    // passTime in ms
     decayOnce(passTime) {
         this._totalPassTime += passTime;
         const y = this._totalPassTime / this._halfLifePeriod;
