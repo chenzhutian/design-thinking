@@ -1,94 +1,94 @@
 .carousel {
-        position: relative;
-        .carousel-indicators {
-            position: absolute;
-            bottom: 10px;
-            left: 50%;
-            z-index: 15;
-            width: 60%;
-            padding-left: 0;
-            margin-left: -30%;
-            text-align: center;
-            list-style: none;
-            li {
-                display: inline-block;
-                width: 10px;
-                height: 10px;
-                margin: 1px;
-                text-indent: -999px;
-                cursor: pointer;
-                background-color: rgba(0, 0, 0, 0);
-                border: 1px solid #fff;
-                border-radius: 10px;
-            }
-            li.active {
-                width: 12px;
-                height: 12px;
-                margin: 0;
-                background-color: #fff;
-            }
+    position: relative;
+    .carousel-indicators {
+        position: absolute;
+        bottom: 10px;
+        left: 50%;
+        z-index: 15;
+        width: 60%;
+        padding-left: 0;
+        margin-left: -30%;
+        text-align: center;
+        list-style: none;
+        li {
+            display: inline-block;
+            width: 10px;
+            height: 10px;
+            margin: 1px;
+            text-indent: -999px;
+            cursor: pointer;
+            background-color: rgba(0, 0, 0, 0);
+            border: 1px solid #fff;
+            border-radius: 10px;
         }
-        .carousel-inner {
-            height: 602px;
-            overflow: hidden;
-            color: white;
-            position: relative;
-            .carousel-wraper {
-                height: 100%;
-                position: relative;
-                left: 0;
-                transition: left 0.5s ease-in-out;
-                .image {
-                    position: relative;
-                    height: 100%;
-                    background-size: cover;
-                    background-position: center center;
-                    transition: left 0.5s linear;
-                    // left: 100%;
-                    display: inline-block;
-                    p {
-                        vertical-align: middle;
-                        padding: 5%;
-                        font-size: 4em;
-                        text-align: center;
-                    }
-                }
-                .image.active {
-                    // left: 0;
-                }
-            }
-        }
-        // @media(max-width:$grid-tablet-breakpoint - 1) {
-        //     .carousel-inner {
-        //         height: 301px;
-        //         .carousel-wraper {
-        //             .image {
-        //                 p {
-        //                     font-size: 2em;
-        //                 }
-        //             }
-        //         }
-        //     }
-        // }
-        .carousel-control {
-            position: absolute;
-            top: 0;
-            bottom: 0;
-            left: 0;
-            width: 15%;
-            font-size: 20px;
-            color: #fff;
-            text-align: center;
-            text-shadow: 0 1px 2px rgba(0, 0, 0, .6);
-            filter: alpha(opacity=50);
-            opacity: .5;
-        }
-        .carousel-control.right {
-            right: 0;
-            left: auto;
-        }
-        .carousel-control.left {
-            left: 0;
-            right: auto;
+        li.active {
+            width: 12px;
+            height: 12px;
+            margin: 0;
+            background-color: #fff;
         }
     }
+    .carousel-inner {
+        height: 602px;
+        overflow: hidden;
+        color: white;
+        position: relative;
+        .transition {
+            transition: left 0.5s ease-in-out;
+        }
+        .carousel-wraper {
+            height: 100%;
+            position: relative;
+            left: 0;
+            .image {
+                position: relative;
+                height: 100%;
+                background-size: cover;
+                background-position: center center;
+                display: inline-block;
+                p {
+                    vertical-align: middle;
+                    padding: 5%;
+                    font-size: 4em;
+                    text-align: center;
+                }
+            }
+            .image.active {
+                // left: 0;
+            }
+        }
+    }
+    // @media(max-width:$grid-tablet-breakpoint - 1) {
+    //     .carousel-inner {
+    //         height: 301px;
+    //         .carousel-wraper {
+    //             .image {
+    //                 p {
+    //                     font-size: 2em;
+    //                 }
+    //             }
+    //         }
+    //     }
+    // }
+    .carousel-control {
+        position: absolute;
+        top: 0;
+        bottom: 0;
+        left: 0;
+        width: 15%;
+        font-size: 20px;
+        color: #fff;
+        text-align: center;
+        text-shadow: 0 1px 2px rgba(0, 0, 0, .6);
+        filter: alpha(opacity=50);
+        opacity: .5;
+    }
+    .carousel-control.right {
+        right: 0;
+        left: auto;
+    }
+    .carousel-control.left {
+        left: 0;
+        right: auto;
+    }
+}
