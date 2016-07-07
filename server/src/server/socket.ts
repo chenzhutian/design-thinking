@@ -17,6 +17,7 @@ interface Room {
     roomName: string;
     parent: string;
     child: string;
+    decayManager: Decay;
 }
 
 interface User {
@@ -30,11 +31,12 @@ function attachIO(server): SocketIO.Server {
     const roomNameToRooms: { [name: string]: Room } = {};
     const rooms: Array<Room> = [];
     const tickInterval: number = 1000;
-    const decay = new Decay(100);
+    const decayInitvalue: number = 100;
 
     // Albumn here
     io.of(NS_ALBUMN).on('connection', socket => {
         console.info('user connect');
+
         let roomName;
         let targetType;
         let userType;
@@ -50,7 +52,7 @@ function attachIO(server): SocketIO.Server {
             if (!params.userType) {
                 // init room if not exists
                 if (!(roomName in roomNameToRooms)) {
-                    roomNameToRooms[roomName] = { parent: socket.id, child: '', roomName };
+                    roomNameToRooms[roomName] = { parent: socket.id, child: '', roomName, decayManager: new Decay(decayInitvalue) };
                     userType = PARENT;
                     targetType = CHILD;
                 } else {
@@ -71,7 +73,7 @@ function attachIO(server): SocketIO.Server {
 
                 // init room if not exists
                 if (!(roomName in roomNameToRooms)) {
-                    roomNameToRooms[roomName] = { parent: '', child: '', roomName };
+                    roomNameToRooms[roomName] = { parent: '', child: '', roomName, decayManager: new Decay(decayInitvalue) };
                 }
                 roomNameToRooms[roomName][userType] = socket.id;
             }
@@ -140,9 +142,10 @@ function attachIO(server): SocketIO.Server {
         });
     });
 
-    setInterval(() => {
+    const timer = setInterval(() => {
         rooms.forEach(room => {
-            io.of(NS_ALBUMN).in(room.roomName).emit('chat message', decay.decayOnce(tickInterval));
+            const decayManager = room.decayManager;
+            io.of(NS_ALBUMN).in(room.roomName).emit('decay', decayManager.decayOnce(tickInterval));
         })
     }, tickInterval);
 
