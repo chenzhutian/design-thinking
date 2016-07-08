@@ -27,11 +27,11 @@ function attachIO(server) {
                 return;
             }
             if (params.userName !== 'daddy' && params.userName !== "boy") {
-                console.info('login_res', { state: false, info: 'wrong userName' });
+                socket.emit('login_res', { state: false, info: 'wrong userName' });
                 return;
             }
-            if (loginUser.has(userName)) {
-                console.info('login_res', { state: false, info: 'this user already login' });
+            if (loginUser.has(params.userName)) {
+                socket.emit('login_res', { state: false, info: 'this user already login' });
                 return;
             }
             userName = params.userName;
@@ -137,6 +137,7 @@ function attachIO(server) {
                     }
                 }
             }
+            loginUser.delete(userName);
             console.info('user disconnected');
         });
     });
