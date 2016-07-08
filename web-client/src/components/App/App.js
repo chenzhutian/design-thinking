@@ -35,7 +35,8 @@ export default {
                 this.userName = user.userName;
                 this.hasLocalUserType = true;
                 this.$nextTick(() => {
-                    this.$refs.carousel.setData(this.images, this.userType, this.userName, this.socket);
+                    this.$refs.carousel.setData(this.images, this.userType,
+                        this.userName, this.socket);
                 });
             } else {
                 const userType = localStorage.getItem('userType');
@@ -45,7 +46,8 @@ export default {
                     this.userName = userName;
                     this.hasLocalUserType = true;
                     this.$nextTick(() => {
-                        this.$refs.carousel.setData(this.images, userType, this.userName, this.socket);
+                        this.$refs.carousel.setData(this.images, userType,
+                            this.userName, this.socket);
                     });
                 }
             }
@@ -85,6 +87,7 @@ export default {
     },
     methods: {
         setUserType(isParent) {
+            if (!this.userName || !this.userName.length) return;
             const userType = isParent ? 'parent' : 'child';
             localStorage.setItem('userType', userType);
             localStorage.setItem('userName', this.userName);
