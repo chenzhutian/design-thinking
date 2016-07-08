@@ -7,6 +7,9 @@ class VaseNamespace(BaseNamespace):
                             'userType':'parent',
                             'userName':'daddy' })
 
+    def on_test_pi(self, *args):
+        print(args)
+
 def main():
     with SocketIO('localhost', 18888, VaseNamespace) as socketIO:
         socket = socketIO.define(VaseNamespace, '/VASE')
