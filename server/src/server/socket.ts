@@ -175,6 +175,7 @@ function attachIO(server): SocketIO.Server {
         let roomName;
         let targetType;
         let userType;
+        socket.emit('test_pi', 'yes');
         // getUserType
         socket.on('getUserType', roomName => {
             const room = roomNameToRooms[roomName];
@@ -186,9 +187,8 @@ function attachIO(server): SocketIO.Server {
                 socket.emit('userType', resUser);
                 return;
             }
-            socket.emit(null);
+            socket.emit('userType', null);
         });
-
 
         // login
         socket.on('login', (params: LoginParams) => {
