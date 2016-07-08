@@ -1,15 +1,14 @@
-from socketIO_client import SocketIO, BaseNamespace, LoggingNamespace, SocketIONamespace
+from socketIO_client import SocketIO, BaseNamespace
 
-class Namespace(BaseNamespace):
+class VaseNamespace(BaseNamespace):
     def on_connect(self):
         print('[Connected]')
+        self.emit('login', { 'roomName': 'design-thinking' })
 
 def main():
-    
-    with SocketIO('localhost', 18888, Namespace) as socketIO:
-        # namespace = socketIO.define(Namespace, '/ALBUMN')
-        socketIO.wait(seconds=1)
-        print 'a'
+    with SocketIO('localhost', 18888, VaseNamespace) as socketIO:
+        socket = socketIO.define(VaseNamespace, '/VASE')
+
 
 if __name__ == '__main__':
     main()
