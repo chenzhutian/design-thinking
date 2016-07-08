@@ -81,6 +81,10 @@ function attachIO(server): SocketIO.Server {
                 };
                 rooms.push(room);
             }
+            // init userType in room if not exists
+            if (!(userType in roomNameToRooms[roomName])) {
+                roomNameToRooms[roomName][userType] = { album: null, vase: null };
+            }
             roomNameToRooms[roomName][userType].album = socket.id;
 
             // init user if not exists
