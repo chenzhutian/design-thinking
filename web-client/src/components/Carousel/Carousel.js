@@ -1,15 +1,8 @@
-import IO from 'socket.io-client';
+
 import Hammer from 'hammerjs';
 export default {
     ready() {
-        this.socket = new IO('/ALBUMN');
-        this.socket.on('connect', () => {
-            this.socket.emit('login', { roomName: 'design-thinking' });
-        });
-        this.socket.on('moveSlides', this.setCurrentSlide);
-        this.socket.on('message', this.receiveMessage);
-        this.socket.on('unReadMessage', this.receiveUnReadMessage);
-        this.socket.on('decay', this.handleDecay);
+
         this.hammer = new Hammer(this.$els.wraper);
         this.hammer.on('swipeleft swiperight panleft panright panend pancancel',
             this.hammerHandler);
@@ -18,6 +11,8 @@ export default {
     hammer: null,
     data() {
         return {
+            userType: null,
+            userName: null,
             currentSlideIndex: 0,
             images: [],
             imageComponentsStyle: [],
@@ -30,7 +25,16 @@ export default {
         };
     },
     methods: {
-        setData(images) {
+        setData(images, userType, userName, socket) {
+            this.socket = socket;
+            this.socket.on('moveSlides', this.setCurrentSlide);
+            this.socket.on('message', this.receiveMessage);
+            this.socket.on('unReadMessage', this.receiveUnReadMessage);
+            this.socket.on('decay', this.handleDecay);
+
+            this.userType = userType;
+            this.userName = userName;
+            this.socket.emit('login', { roomName: 'design-thinking', userType, userName });
             this.images = images;
             this.images.forEach((image, index) => {
                 const componentStyle = [];

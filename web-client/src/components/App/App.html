@@ -1,3 +1,8 @@
 <div id="app">
-    <carousel v-ref:carousel></carousel>
+    <carousel v-if="hasLocalUserType" v-ref:carousel></carousel>
+    <div v-else class="btn-chose-type">
+        <input type="text" v-model="userName" />
+        <button @click="setUserType(true)">Parent</button>
+        <button @click="setUserType(false)">Child</button>
+    </div>
 </div>
