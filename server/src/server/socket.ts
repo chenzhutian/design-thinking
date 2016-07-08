@@ -44,6 +44,21 @@ function attachIO(server): SocketIO.Server {
         let roomName;
         let targetType;
         let userType;
+        // getUserType
+        socket.on('getUserType', roomName => {
+            const room = roomNameToRooms[roomName];
+            if (room && room.parent && room.parent.album) {
+                const resUser = {
+                    userType: 'child',
+                    userName: 'aLittleBoy'
+                };
+                socket.emit('userType', resUser);
+                return;
+            }
+            socket.emit(null);
+        });
+
+
         // login
         socket.on('login', (params: LoginParams) => {
             console.info(params);
