@@ -33,7 +33,6 @@ export default {
 
             this.userType = userType;
             this.userName = userName;
-            this.socket.emit('login', { roomName: 'design-thinking', userType, userName });
             this.images = images;
             this.images.forEach((image, index) => {
                 const componentStyle = [];

@@ -55,14 +55,14 @@ function attachIO(server): SocketIO.Server {
                 return;
             }
             if (params.userName !== 'daddy' && params.userName !== "boy") {
-                console.info('login_res', { state: false, info: 'wrong userName' });
+                socket.emit('login_res', { state: false, info: 'wrong userName' });
                 return;
             }
-            if (loginUser.has(userName)) {
-                console.info('login_res', { state: false, info: 'this user already login' });
+            if (loginUser.has(params.userName)) {
+                socket.emit('login_res', { state: false, info: 'this user already login' });
                 return;
             }
-
+            
             userName = params.userName;
             roomName = params.roomName;
             userType = userName === "daddy" ? PARENT : CHILD;
@@ -95,7 +95,6 @@ function attachIO(server): SocketIO.Server {
                 };
             }
             userNameToUser[userName].album = socket.id;
-
             socket.join(roomName, joinRoomErr => {
                 if (joinRoomErr) throw joinRoomErr;
                 console.info('join room success');
@@ -170,6 +169,7 @@ function attachIO(server): SocketIO.Server {
                     }
                 }
             }
+            loginUser.delete(userName);
             console.info('user disconnected');
         });
     });
