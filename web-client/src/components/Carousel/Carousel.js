@@ -2,7 +2,6 @@
 import Hammer from 'hammerjs';
 export default {
     ready() {
-
         this.hammer = new Hammer(this.$els.wraper);
         this.hammer.on('swipeleft swiperight panleft panright panend pancancel',
             this.hammerHandler);

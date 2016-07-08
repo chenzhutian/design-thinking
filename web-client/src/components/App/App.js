@@ -16,42 +16,25 @@ export default {
         this.socket = new IO('/ALBUM');
 
         this.socket.on('connect', () => {
-            this.socket.emit('getUserType', 'design-thinking');
+            const userName = localStorage.getItem('userName');
+            if (userName) {
+                this.userName = userName;
+                this.login();
+            }
         });
-
-        this.socket.on('reconnect', () => {
-            this.socket.emit('login', {
-                roomName: 'design-thinking',
-                userType: this.userType,
-                userName: this.userName,
-            });
-        });
-        this.socket.on('userType', user => {
-            if (user) {
+        this.socket.on('login_res', res => {
+            if (res.state) {
+                this.userType = res.userType;
                 localStorage.clear();
-                localStorage.setItem('userType', user.userType);
-                localStorage.setItem('userName', user.userName);
-                this.userType = user.userType;
-                this.userName = user.userName;
-                this.hasLocalUserType = true;
+                localStorage.setItem('userName', this.userName);
+                this.loginSuccess = true;
                 this.$nextTick(() => {
                     this.$refs.carousel.setData(this.images, this.userType,
                         this.userName, this.socket);
                 });
+            } else {
+                console.warn(res.info);
             }
-            // else {
-            //     const userType = localStorage.getItem('userType');
-            //     const userName = localStorage.getItem('userName');
-            //     if (userType && userName) {
-            //         this.userType = userType;
-            //         this.userName = userName;
-            //         this.hasLocalUserType = true;
-            //         this.$nextTick(() => {
-            //             this.$refs.carousel.setData(this.images, userType,
-            //                 this.userName, this.socket);
-            //         });
-            //     }
-            // }
         });
     },
     components: {
@@ -60,8 +43,9 @@ export default {
     socket: null,
     data() {
         return {
-            hasLocalUserType: false,
+            loginSuccess: false,
             userName: null,
+            userType: null,
             images: [
                 {
                     components: [image1],
@@ -87,14 +71,11 @@ export default {
         };
     },
     methods: {
-        setUserType(isParent) {
+        login() {
             if (!this.userName || !this.userName.length) return;
-            const userType = isParent ? 'parent' : 'child';
-            localStorage.setItem('userType', userType);
-            localStorage.setItem('userName', this.userName);
-            this.hasLocalUserType = true;
-            this.$nextTick(() => {
-                this.$refs.carousel.setData(this.images, userType, this.userName, this.socket);
+            this.socket.emit('login', {
+                userName: this.userName,
+                roomName: 'design-thinking',
             });
         },
     },
