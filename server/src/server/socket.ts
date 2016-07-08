@@ -48,6 +48,7 @@ function attachIO(server): SocketIO.Server {
         socket.on('getUserType', roomName => {
             const room = roomNameToRooms[roomName];
             if (room && room.parent && room.parent.album) {
+                console.log(room);
                 const resUser = {
                     userType: 'child',
                     userName: 'aLittleBoy'

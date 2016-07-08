@@ -21,6 +21,7 @@ function attachIO(server) {
         socket.on('getUserType', roomName => {
             const room = roomNameToRooms[roomName];
             if (room && room.parent && room.parent.album) {
+                console.log(room);
                 const resUser = {
                     userType: 'child',
                     userName: 'aLittleBoy'
@@ -135,6 +136,7 @@ function attachIO(server) {
         let roomName;
         let targetType;
         let userType;
+        socket.emit('test_pi', 'yes');
         socket.on('getUserType', roomName => {
             const room = roomNameToRooms[roomName];
             if (room && room.parent && room.parent.vase) {
@@ -145,7 +147,7 @@ function attachIO(server) {
                 socket.emit('userType', resUser);
                 return;
             }
-            socket.emit(null);
+            socket.emit('userType', null);
         });
         socket.on('login', (params) => {
             console.info(params);
