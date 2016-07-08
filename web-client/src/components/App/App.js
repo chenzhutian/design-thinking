@@ -38,19 +38,20 @@ export default {
                     this.$refs.carousel.setData(this.images, this.userType,
                         this.userName, this.socket);
                 });
-            } else {
-                const userType = localStorage.getItem('userType');
-                const userName = localStorage.getItem('userName');
-                if (userType && userName) {
-                    this.userType = userType;
-                    this.userName = userName;
-                    this.hasLocalUserType = true;
-                    this.$nextTick(() => {
-                        this.$refs.carousel.setData(this.images, userType,
-                            this.userName, this.socket);
-                    });
-                }
             }
+            // else {
+            //     const userType = localStorage.getItem('userType');
+            //     const userName = localStorage.getItem('userName');
+            //     if (userType && userName) {
+            //         this.userType = userType;
+            //         this.userName = userName;
+            //         this.hasLocalUserType = true;
+            //         this.$nextTick(() => {
+            //             this.$refs.carousel.setData(this.images, userType,
+            //                 this.userName, this.socket);
+            //         });
+            //     }
+            // }
         });
     },
     components: {
