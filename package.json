@@ -6,7 +6,7 @@
     "dev": "node server.js",
     "prod": "node dist/index.js -production",
     "build":"node build.js && tsc -p .",
-    "deploy":"cd .. & git subtree push --prefix server/dist origin dist"
+    "deploy":"cd .. & git subtree push --prefix server/dist origin server-dist"
   },
   "dependencies": {
     "async": "^2.0.0-rc.3",
