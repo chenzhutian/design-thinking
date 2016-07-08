@@ -55,7 +55,7 @@ function attachIO(server): SocketIO.Server {
                 socket.emit('userType', resUser);
                 return;
             }
-            socket.emit(null);
+            socket.emit('userType', null);
         });
 
 
@@ -175,6 +175,21 @@ function attachIO(server): SocketIO.Server {
         let roomName;
         let targetType;
         let userType;
+        // getUserType
+        socket.on('getUserType', roomName => {
+            const room = roomNameToRooms[roomName];
+            if (room && room.parent && room.parent.vase) {
+                const resUser = {
+                    userType: 'child',
+                    userName: 'aLittleBoy'
+                };
+                socket.emit('userType', resUser);
+                return;
+            }
+            socket.emit(null);
+        });
+
+
         // login
         socket.on('login', (params: LoginParams) => {
             console.info(params);
@@ -196,6 +211,10 @@ function attachIO(server): SocketIO.Server {
                     decayManager: new Decay(decayInitvalue)
                 };
                 rooms.push(room);
+            }
+            // init userType in room if not exists
+            if (!(userType in roomNameToRooms[roomName])) {
+                roomNameToRooms[roomName][userType] = { album: null, vase: null };
             }
             roomNameToRooms[roomName][userType].vase = socket.id;
 
@@ -269,8 +288,8 @@ function attachIO(server): SocketIO.Server {
                 // erase vase
                 room[userType].vase = null;
                 // if no vase also, erase user
-                if (!room[userType].album) {
-                    room[userType] = null;
+                if (!room[userType].vase) {
+                    delete room[userType];
                     // if no targetUser also, erase room
                     if (!room[targetType]) {
                         delete roomNameToRooms[roomName];
