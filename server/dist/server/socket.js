@@ -110,6 +110,9 @@ function attachIO(server) {
             const room = roomNameToRooms[roomName];
             if (room) {
                 room[userType] = null;
+                if (!room[targetType]) {
+                    delete roomNameToRooms[roomName];
+                }
             }
             console.info('user disconnected');
         });

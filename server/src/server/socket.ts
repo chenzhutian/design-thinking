@@ -138,7 +138,7 @@ function attachIO(server): SocketIO.Server {
             if (room) {
                 room[userType] = null;
                 if (!room[targetType]) {
-                    roomNameToRooms[roomName] = null;
+                    delete roomNameToRooms[roomName];
                 }
             }
             console.info('user disconnected');
