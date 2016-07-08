@@ -156,6 +156,7 @@ function attachIO(server): SocketIO.Server {
             const room = roomNameToRooms[roomName];
             if (room) {
                 // erase album
+                if(!room[userType]) return;
                 room[userType].album = null;
                 // if no vase also, erase user
                 if (!room[userType].vase) {

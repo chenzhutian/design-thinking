@@ -119,6 +119,8 @@ function attachIO(server) {
         socket.on('disconnect', () => {
             const room = roomNameToRooms[roomName];
             if (room) {
+                if (!room[userType])
+                    return;
                 room[userType].album = null;
                 if (!room[userType].vase) {
                     delete room[userType];
