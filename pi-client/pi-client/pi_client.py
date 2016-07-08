@@ -22,7 +22,7 @@ class VaseNamespace(BaseNamespace):
         print(args)
 
     def on_message(self, messages):
-        print(data)
+        print(messages)
 
     def on_unread_message(self,messages):
         pass
@@ -30,9 +30,9 @@ class VaseNamespace(BaseNamespace):
 def main():
     with SocketIO('localhost', 18888, VaseNamespace) as socketIO:
         vase_socket = socketIO.define(VaseNamespace, '/VASE')
-        socketIO.wait(True)
         raw_input_A = raw_input("raw_input: ")
         vase_socket.emit('sendMessage',raw_input_A)
+        socketIO.wait()
 
 if __name__ == '__main__':
     main()
