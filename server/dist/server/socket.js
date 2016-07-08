@@ -120,7 +120,7 @@ function attachIO(server) {
             if (room) {
                 room[userType].album = null;
                 if (!room[userType].vase) {
-                    room[userType] = null;
+                    delete room[userType];
                     if (!room[targetType]) {
                         delete roomNameToRooms[roomName];
                     }

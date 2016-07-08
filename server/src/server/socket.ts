@@ -158,7 +158,7 @@ function attachIO(server): SocketIO.Server {
                 room[userType].album = null;
                 // if no vase also, erase user
                 if (!room[userType].vase) {
-                    room[userType] = null;
+                    delete room[userType];
                     // if no targetUser also, erase room
                     if (!room[targetType]) {
                         delete roomNameToRooms[roomName];
