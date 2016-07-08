@@ -1,5 +1,5 @@
 import * as Socket from 'socket.io';
-import { NS_ALBUMN} from './socket-const';
+import { NS_ALBUM, NS_VASE } from './socket-const';
 import Decay from '../decay';
 
 // db
@@ -11,75 +11,74 @@ const CHILD = "child";
 interface LoginParams {
     roomName: string;
     userType: UserType;
+    userName: string;
 }
 
 interface Room {
     roomName: string;
-    parent: string;
-    child: string;
+    parent: { album: string, vase: string };
+    child: { album: string, vase: string };
     decayManager: Decay;
 }
 
 interface User {
     type: UserType;
+    userName: string;
     roomName: string;
+    album: string;
+    vase: string;
 }
 
 function attachIO(server): SocketIO.Server {
     const io: SocketIO.Server = Socket(server);
-    const socketIdToUser: { [id: string]: User } = {};
+    const userNameToUser: { [id: string]: User } = {};
     const roomNameToRooms: { [name: string]: Room } = {};
     const rooms: Array<Room> = [];
     const tickInterval: number = 1000;
     const decayInitvalue: number = 100;
 
-    // Albumn here
-    io.of(NS_ALBUMN).on('connection', socket => {
+    // Album here
+    io.of(NS_ALBUM).on('connection', socket => {
         console.info('user connect');
-
+        let userName;
         let roomName;
         let targetType;
         let userType;
         // login
         socket.on('login', (params: LoginParams) => {
             console.info(params);
-            if (!params.roomName) {
+            if (!params || !params.roomName || !params.userType || !params.userName) {
                 console.info('login failed');
                 return;
             }
+            userName = params.userName;
             roomName = params.roomName;
+            userType = params.userType;
+            targetType = userType === CHILD ? PARENT : CHILD;
 
-            if (!params.userType) {
-                // init room if not exists
-                if (!(roomName in roomNameToRooms)) {
-                    roomNameToRooms[roomName] = { parent: socket.id, child: '', roomName, decayManager: new Decay(decayInitvalue) };
-                    userType = PARENT;
-                    targetType = CHILD;
-                } else {
-                    const room = roomNameToRooms[roomName];
-                    if (!room.child) {
-                        room.child = socket.id;
-                        userType = CHILD;
-                        targetType = PARENT;
-                    } else {
-                        room.parent = socket.id;
-                        userType = PARENT;
-                        targetType = CHILD;
-                    }
-                }
-            } else {
-                userType = params.userType;
-                targetType = userType === CHILD ? PARENT : CHILD;
-
-                // init room if not exists
-                if (!(roomName in roomNameToRooms)) {
-                    roomNameToRooms[roomName] = { parent: '', child: '', roomName, decayManager: new Decay(decayInitvalue) };
-                }
-                roomNameToRooms[roomName][userType] = socket.id;
+            // init room if not exists
+            if (!(roomName in roomNameToRooms)) {
+                const room = roomNameToRooms[roomName] = {
+                    parent: { album: null, vase: null },
+                    child: { album: null, vase: null },
+                    roomName,
+                    decayManager: new Decay(decayInitvalue)
+                };
+                rooms.push(room);
             }
+            roomNameToRooms[roomName][userType].album = socket.id;
 
-            socketIdToUser[socket.id] = { type: userType, roomName };
-            rooms.push(roomNameToRooms[roomName]);
+            // init user if not exists
+            if (!(userName in userNameToUser)) {
+                userNameToUser[userName] = {
+                    userName: userName,
+                    type: userType,
+                    roomName,
+                    album: null,
+                    vase: null,
+                };
+            }
+            userNameToUser[userName].album = socket.id;
 
             socket.join(roomName, joinRoomErr => {
                 if (joinRoomErr) throw joinRoomErr;
@@ -111,7 +110,7 @@ function attachIO(server): SocketIO.Server {
                 isRead: false,
                 isReceived: false,
             };
-            if (room[targetType]) {
+            if (room[targetType].album) {
                 // target is connected
                 message.isReceived = true;
                 messageController.insertTextMessage(message, (err, recordId) => {
@@ -136,9 +135,127 @@ function attachIO(server): SocketIO.Server {
         socket.on('disconnect', () => {
             const room = roomNameToRooms[roomName];
             if (room) {
-                room[userType] = null;
-                if (!room[targetType]) {
-                    delete roomNameToRooms[roomName];
+                // erase album
+                room[userType].album = null;
+                // if no vase also, erase user
+                if (!room[userType].vase) {
+                    room[userType] = null;
+                    // if no targetUser also, erase room
+                    if (!room[targetType]) {
+                        delete roomNameToRooms[roomName];
+                    }
+                }
+            }
+            console.info('user disconnected');
+        });
+    });
+
+    io.of(NS_VASE).on('connection', socket => {
+        console.info('user connect');
+        let userName;
+        let roomName;
+        let targetType;
+        let userType;
+        // login
+        socket.on('login', (params: LoginParams) => {
+            console.info(params);
+            if (!params || !params.roomName || !params.userType || !params.userName) {
+                console.info('login failed');
+                return;
+            }
+            userName = params.userName;
+            roomName = params.roomName;
+            userType = params.userType;
+            targetType = userType === CHILD ? PARENT : CHILD;
+
+            // init room if not exists
+            if (!(roomName in roomNameToRooms)) {
+                const room = roomNameToRooms[roomName] = {
+                    parent: { album: null, vase: null },
+                    child: { album: null, vase: null },
+                    roomName,
+                    decayManager: new Decay(decayInitvalue)
+                };
+                rooms.push(room);
+            }
+            roomNameToRooms[roomName][userType].vase = socket.id;
+
+            // init user if not exists
+            if (!(userName in userNameToUser)) {
+                userNameToUser[userName] = {
+                    userName: userName,
+                    type: userType,
+                    roomName,
+                    album: null,
+                    vase: null,
+                };
+            }
+            userNameToUser[userName].vase = socket.id;
+
+            socket.join(roomName, joinRoomErr => {
+                if (joinRoomErr) throw joinRoomErr;
+                console.info('join room success');
+                messageController.fetchUnReadTextMessage(targetType, (err, messages) => {
+                    if (err) throw err;
+                    if (messages.length) {
+                        socket.emit('unReadMessage', messages);
+                    }
+                });
+            });
+        });
+
+        // when receive message
+        socket.on('moveSlides', slidesIndex => {
+            if (userType === PARENT) {
+                socket.in(roomName).emit('moveSlides', slidesIndex);
+            }
+        });
+
+        // sendMessage
+        socket.on('sendMessage', msg => {
+            const room = roomNameToRooms[roomName];
+            if (!room) return;
+            const message = {
+                content: msg,
+                roomName,
+                userType: userType,
+                isRead: false,
+                isReceived: false,
+            };
+            if (room[targetType].vase) {
+                // target is connected
+                message.isReceived = true;
+                messageController.insertTextMessage(message, (err, recordId) => {
+                    if (err) throw err;
+                    socket.in(roomName).emit('message', { content: msg, id: recordId });
+                });
+            } else {
+                messageController.insertTextMessage(message, err => {
+                    if (err) throw err;
+                });
+            }
+        });
+
+        // read message
+        socket.on('readMessage', messageId => {
+            if (!messageId || !messageId.length) return;
+            messageController.readTextMessage(messageId, (err, res) => {
+                if (err) throw err;
+            });
+        });
+
+        socket.on('disconnect', () => {
+            const room = roomNameToRooms[roomName];
+            if (room) {
+                // erase vase
+                room[userType].vase = null;
+                // if no vase also, erase user
+                if (!room[userType].album) {
+                    room[userType] = null;
+                    // if no targetUser also, erase room
+                    if (!room[targetType]) {
+                        delete roomNameToRooms[roomName];
+                    }
                 }
             }
             console.info('user disconnected');
@@ -148,7 +265,7 @@ function attachIO(server): SocketIO.Server {
     const timer = setInterval(() => {
         rooms.forEach(room => {
             const decayManager = room.decayManager;
-            io.of(NS_ALBUMN).in(room.roomName).emit('decay', decayManager.decayOnce(tickInterval));
+            io.of(NS_ALBUM).in(room.roomName).emit('decay', decayManager.decayOnce(tickInterval));
         })
     }, tickInterval);
 

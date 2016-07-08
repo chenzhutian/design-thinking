@@ -1,7 +1,7 @@
-const NS_ALBUMN = '/ALBUMN';
+const NS_ALBUM = '/ALBUM';
 const NS_VASE = '/VASE';
 
 export {
-NS_ALBUMN,
+NS_ALBUM,
 NS_VASE,
 }
