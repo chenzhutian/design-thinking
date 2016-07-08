@@ -28,7 +28,7 @@ function attachIO(server) {
                 socket.emit('userType', resUser);
                 return;
             }
-            socket.emit(null);
+            socket.emit('userType', null);
         });
         socket.on('login', (params) => {
             console.info(params);
@@ -135,6 +135,18 @@ function attachIO(server) {
         let roomName;
         let targetType;
         let userType;
+        socket.on('getUserType', roomName => {
+            const room = roomNameToRooms[roomName];
+            if (room && room.parent && room.parent.vase) {
+                const resUser = {
+                    userType: 'child',
+                    userName: 'aLittleBoy'
+                };
+                socket.emit('userType', resUser);
+                return;
+            }
+            socket.emit(null);
+        });
         socket.on('login', (params) => {
             console.info(params);
             if (!params || !params.roomName || !params.userType || !params.userName) {
@@ -153,6 +165,9 @@ function attachIO(server) {
                     decayManager: new decay_1.default(decayInitvalue)
                 };
                 rooms.push(room);
+            }
+            if (!(userType in roomNameToRooms[roomName])) {
+                roomNameToRooms[roomName][userType] = { album: null, vase: null };
             }
             roomNameToRooms[roomName][userType].vase = socket.id;
             if (!(userName in userNameToUser)) {
@@ -221,8 +236,8 @@ function attachIO(server) {
             const room = roomNameToRooms[roomName];
             if (room) {
                 room[userType].vase = null;
-                if (!room[userType].album) {
-                    room[userType] = null;
+                if (!room[userType].vase) {
+                    delete room[userType];
                     if (!room[targetType]) {
                         delete roomNameToRooms[roomName];
                     }
