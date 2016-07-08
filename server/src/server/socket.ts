@@ -37,7 +37,8 @@ function attachIO(server): SocketIO.Server {
     const rooms: Array<Room> = [];
     const tickInterval: number = 1000;
     const decayInitvalue: number = 100;
-    const loginUser = new Set();
+    const loginedAlbumUser = new Set();
+    const loginedVaseUser = new Set();
 
     // Album here
     io.of(NS_ALBUM).on('connection', socket => {
@@ -58,11 +59,11 @@ function attachIO(server): SocketIO.Server {
                 socket.emit('login_res', { state: false, info: 'wrong userName' });
                 return;
             }
-            if (loginUser.has(params.userName)) {
+            if (loginedAlbumUser.has(params.userName)) {
                 socket.emit('login_res', { state: false, info: 'this user already login' });
                 return;
             }
-            
+
             userName = params.userName;
             roomName = params.roomName;
             userType = userName === "daddy" ? PARENT : CHILD;
@@ -100,7 +101,7 @@ function attachIO(server): SocketIO.Server {
                 console.info('join room success');
                 socket.emit('login_res', { state: true, info: 'login success', userType });
                 loginSuccess = true;
-                loginUser.add(userName);
+                loginedAlbumUser.add(userName);
                 messageController.fetchUnReadTextMessage(targetType, (err, messages) => {
                     if (err) throw err;
                     if (messages.length) {
@@ -169,7 +170,7 @@ function attachIO(server): SocketIO.Server {
                     }
                 }
             }
-            loginUser.delete(userName);
+            loginedAlbumUser.delete(userName);
             console.info('user disconnected');
         });
     });
@@ -180,31 +181,26 @@ function attachIO(server): SocketIO.Server {
         let roomName;
         let targetType;
         let userType;
-        socket.emit('test_pi', 'yes');
-        // getUserType
-        socket.on('getUserType', roomName => {
-            const room = roomNameToRooms[roomName];
-            if (room && room.parent && room.parent.vase) {
-                const resUser = {
-                    userType: 'child',
-                    userName: 'aLittleBoy'
-                };
-                socket.emit('userType', resUser);
-                return;
-            }
-            socket.emit('userType', null);
-        });
-
+        let loginSuccess = false;
         // login
         socket.on('login', (params: LoginParams) => {
             console.info(params);
-            if (!params || !params.roomName || !params.userType || !params.userName) {
-                console.info('login failed');
+            if (!params || !params.roomName || !params.userName) {
+                socket.emit('login_res', { state: false, info: 'no login params' });
                 return;
             }
+            if (params.userName !== 'daddy' && params.userName !== "boy") {
+                socket.emit('login_res', { state: false, info: 'wrong userName' });
+                return;
+            }
+            if (loginedVaseUser.has(params.userName)) {
+                socket.emit('login_res', { state: false, info: 'this user already login' });
+                return;
+            }
+
             userName = params.userName;
             roomName = params.roomName;
-            userType = params.userType;
+            userType = userName === "daddy" ? PARENT : CHILD;
             targetType = userType === CHILD ? PARENT : CHILD;
 
             // init room if not exists
@@ -234,11 +230,12 @@ function attachIO(server): SocketIO.Server {
                 };
             }
             userNameToUser[userName].vase = socket.id;
-            console.log(userNameToUser[userName]);
-
             socket.join(roomName, joinRoomErr => {
                 if (joinRoomErr) throw joinRoomErr;
                 console.info('join room success');
+                socket.emit('login_res', { state: true, info: 'login success', userType });
+                loginSuccess = true;
+                loginedVaseUser.add(userName);
                 messageController.fetchUnReadTextMessage(targetType, (err, messages) => {
                     if (err) throw err;
                     if (messages.length) {
@@ -248,8 +245,17 @@ function attachIO(server): SocketIO.Server {
             });
         });
 
+        // when receive message
+        socket.on('moveSlides', slidesIndex => {
+            if (!loginSuccess) return;
+            if (userType === PARENT) {
+                socket.in(roomName).emit('moveSlides', slidesIndex);
+            }
+        });
+
         // sendMessage
         socket.on('sendMessage', msg => {
+            if (!loginSuccess) return;
             const room = roomNameToRooms[roomName];
             if (!room) return;
             const message = {
@@ -259,15 +265,12 @@ function attachIO(server): SocketIO.Server {
                 isRead: false,
                 isReceived: false,
             };
-            console.log(room);
-            if (room[targetType].album) {
+            if (room[targetType].vase || room[targetType].album) { // TODO remove album
                 // target is connected
                 message.isReceived = true;
                 messageController.insertTextMessage(message, (err, recordId) => {
                     if (err) throw err;
-                    console.log(msg);
-                    io.of(NS_ALBUM).in(roomName).emit('message', { content: msg, id: recordId });
-                    io.of(NS_VASE).in(roomName).emit('message', { content: msg, id: recordId });
+                    socket.in(roomName).emit('message', { content: msg, id: recordId });
                 });
             } else {
                 messageController.insertTextMessage(message, err => {
@@ -278,6 +281,7 @@ function attachIO(server): SocketIO.Server {
 
         // read message
         socket.on('readMessage', messageId => {
+            if (!loginSuccess) return;
             if (!messageId || !messageId.length) return;
             messageController.readTextMessage(messageId, (err, res) => {
                 if (err) throw err;
@@ -285,6 +289,7 @@ function attachIO(server): SocketIO.Server {
         });
 
         socket.on('disconnect', () => {
+            if (!loginSuccess) return;
             const room = roomNameToRooms[roomName];
             if (room) {
                 // erase vase
@@ -299,6 +304,7 @@ function attachIO(server): SocketIO.Server {
                     }
                 }
             }
+            loginedVaseUser.delete(userName);
             console.info('user disconnected');
         });
     });
