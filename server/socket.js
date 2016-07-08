@@ -49,6 +49,9 @@ function attachIO(server) {
                 };
                 rooms.push(room);
             }
+            if (!(userType in roomNameToRooms[roomName])) {
+                roomNameToRooms[roomName][userType] = { album: null, vase: null };
+            }
             roomNameToRooms[roomName][userType].album = socket.id;
             if (!(userName in userNameToUser)) {
                 userNameToUser[userName] = {
