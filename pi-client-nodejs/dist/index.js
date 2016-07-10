@@ -1,22 +1,19 @@
-import * as IO from 'socket.io-client';
-import * as onoff from 'onoff';
-
-// get args
+"use strict";
+const IO = require('socket.io-client');
 const args = process.argv.slice(2);
 const userName = args[0];
 const __DEVELOPMENT__ = args[1] === "-production" ? false : true;
-const hostUrl = __DEVELOPMENT__ ? 'http://localhost:18888' : 'http://115.159.30.68';
 if (userName !== 'daddy' && userName !== 'boy') {
     throw new Error('wrong user Name!');
 }
-
 let userType;
 let loginSuccess = false;
+const hostUrl = __DEVELOPMENT__ ? 'http://localhost:18888' : 'http://115.159.30.68';
 const socket = IO(`${hostUrl}/VASE`);
 socket.on('connect', () => {
     console.log('connect');
     socket.emit('login', {
-        userName,
+        userName: userName,
         roomName: 'design-thinking',
     });
 });
@@ -25,20 +22,11 @@ socket.on('login_res', res => {
         userType = res.userType;
         loginSuccess = true;
         console.log('loginSuccess');
-    } else {
+    }
+    else {
         console.warn(res.info);
     }
 });
-
-const Gpio = onoff.Gpio;
-const led = new Gpio(16, 'out');
-const button = new Gpio(12, 'in', 'both');
-button.watch((err, value) => {
-    if (value === 0) {
-        led.writeSync(1);
-        console.log('yes from nodejs');
-    } else {
-        led.writeSync(0);
-    }
-
-});
+for (let i = 0; i < 10; ++i)
+    console.log(i);
+//# sourceMappingURL=index.js.map
