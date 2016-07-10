@@ -1,0 +1,21 @@
+{
+  "name": "pi-client-nodejs",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "build": "node build.js && tsc -p .",
+    "deploy": "cd .. & git subtree push --prefix pi-client-nodejs/dist origin pi-client-dist"
+  },
+  "author": "zhutian",
+  "license": "ISC",
+  "dependencies": {
+    "onoff": "^1.1.1",
+    "socket.io-client": "^1.4.8",
+    "typescript": "^1.8.10"
+  },
+  "devDependencies": {
+    "shelljs": "^0.7.0",
+    "tslint": "^3.13.0"
+  }
+}
