@@ -236,6 +236,9 @@ function attachIO(server): SocketIO.Server {
                 socket.emit('login_res', { state: true, info: 'login success', userType });
                 loginSuccess = true;
                 loginedVaseUser.add(userName);
+                setInterval(() => {
+                    socket.emit('test_pi', 3);
+                }, 5000);
                 messageController.fetchUnReadTextMessage(targetType, (err, messages) => {
                     if (err) throw err;
                     if (messages.length) {
