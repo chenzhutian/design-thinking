@@ -26,7 +26,7 @@ class PiClient {
                 this._playButton.watch((err, value) => {
                     if (err)
                         throw err;
-                    if (value === 0) {
+                    if (value === 1) {
                         this._messageManager.readMessage();
                     }
                     else {
