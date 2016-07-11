@@ -1,7 +1,7 @@
 // import * as IO from 'socket.io-client';
 import * as fs from 'fs';
-import {Sound as PlaySound } from 'node-aplay';
-import {Sound as RecordSound} from 'node-arecord';
+import * as PlaySound from 'node-aplay';
+import * as RecordSound from 'node-arecord';
 import {
     MESSAGE,
     PUSH_UNREAD_MESSAGE,
@@ -34,16 +34,17 @@ export default class MessageManager {
     private _isRecording: boolean = false;
     private _recordTimeoutGap: number = 500;
     private _recordTimer: NodeJS.Timer;
-    private _recordSound: RecordSound;
+    private _recordSound: Sound;
 
     constructor(socket: SocketIOClient.Socket) {
+        this._unReadMessage = [];
         // init received message files
         fs.readdir(RECEIVED_MESSAGE_PATH, (err, files) => {
-            this._receivedMessageFileList = files;
+            this._receivedMessageFileList = files.map(file => `${RECEIVED_MESSAGE_PATH}/${file}`);
         });
         // init sent message files
         fs.readdir(SENT_MESSAGE_PATH, (err, files) => {
-            this._sentMessageFileList = files;
+            this._sentMessageFileList = files.map(file => `${SENT_MESSAGE_PATH}/${file}`);
         });
 
         this._socket = socket;

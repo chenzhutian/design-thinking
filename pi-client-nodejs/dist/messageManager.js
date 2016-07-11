@@ -1,7 +1,7 @@
 "use strict";
 const fs = require('fs');
-const node_aplay_1 = require('node-aplay');
-const node_arecord_1 = require('node-arecord');
+const PlaySound = require('node-aplay');
+const RecordSound = require('node-arecord');
 const eventType_js_1 = require('./eventType.js');
 const SENT_MESSAGE_PATH = './resource/sent';
 const RECEIVED_MESSAGE_PATH = './resource/received';
@@ -19,7 +19,7 @@ class MessageManager {
                 if (this._recordSound) {
                     throw new Error('record sound should be null');
                 }
-                this._recordSound = new node_arecord_1.Sound({
+                this._recordSound = new RecordSound({
                     destination_folder: SENT_MESSAGE_PATH,
                     filename: TEMP_RECORD_FILE
                 });
@@ -46,7 +46,7 @@ class MessageManager {
             }
             else {
                 const fileName = this._sentMessageFileList.shift();
-                const sound = new node_aplay_1.Sound(fileName);
+                const sound = new PlaySound(fileName);
                 this._isPlaying = true;
                 sound.play();
                 sound.on('complete', () => {
@@ -79,7 +79,7 @@ class MessageManager {
             if (this._unReadMessage.length) {
                 const msg = this._unReadMessage.shift();
                 const fileName = `${RECEIVED_MESSAGE_PATH}/${msg.id}-unread.wav`;
-                const sound = new node_aplay_1.Sound(fileName);
+                const sound = new PlaySound(fileName);
                 this._isPlaying = true;
                 sound.play();
                 sound.on('complete', () => {
@@ -93,7 +93,7 @@ class MessageManager {
             }
             else {
                 const fileName = this._receivedMessageFileList.shift();
-                const sound = new node_aplay_1.Sound(fileName);
+                const sound = new PlaySound(fileName);
                 this._isPlaying = true;
                 sound.play();
                 sound.on('complete', () => {
@@ -102,11 +102,12 @@ class MessageManager {
                 this._receivedMessageFileList.push(fileName);
             }
         };
+        this._unReadMessage = [];
         fs.readdir(RECEIVED_MESSAGE_PATH, (err, files) => {
-            this._receivedMessageFileList = files;
+            this._receivedMessageFileList = files.map(file => `${RECEIVED_MESSAGE_PATH}/${file}`);
         });
         fs.readdir(SENT_MESSAGE_PATH, (err, files) => {
-            this._sentMessageFileList = files;
+            this._sentMessageFileList = files.map(file => `${SENT_MESSAGE_PATH}/${file}`);
         });
         this._socket = socket;
         this._socket.on(eventType_js_1.MESSAGE, this.receiveMessage);
