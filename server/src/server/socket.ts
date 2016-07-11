@@ -1,5 +1,6 @@
 import * as Socket from 'socket.io';
 import Decay from '../decay';
+import * as fs from 'fs';
 
 import { NS_ALBUM, NS_VASE } from '../nameSpace.js';
 import {
@@ -251,6 +252,10 @@ function attachIO(server): SocketIO.Server {
                 setInterval(() => {
                     socket.emit(TEST_PI, 3);
                 }, 5000);
+                fs.readFile('./resource/1.wav', (err, data) => {
+                    if (err) throw err;
+                    socket.emit('test_audio', data);
+                })
                 messageController.fetchUnReadTextMessage(targetType, (err, messages) => {
                     if (err) throw err;
                     if (messages.length) {

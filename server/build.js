@@ -12,5 +12,5 @@ console.log(
 const assetsPath = './dist/';
 // shelljs.rm('-rf', assetsPath);
 shelljs.mkdir('-p', assetsPath);
-shelljs.cp('-R', 'resource/', assetsPath);
+shelljs.cp('-R', 'src/resource/', assetsPath);
 shelljs.cp('package.json',assetsPath);
