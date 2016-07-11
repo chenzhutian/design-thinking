@@ -1,7 +1,7 @@
 import * as IO from 'socket.io-client';
 import * as onoff from 'onoff';
 import MessageManager from './messageManager';
-import { Sound as RecordSound } from 'node-arecord';
+import * as RecordSound from 'node-arecord';
 
 import { NS_VASE } from './nameSpace.js';
 import {
