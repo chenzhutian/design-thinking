@@ -5,8 +5,8 @@
   "scripts": {
     "dev": "node server.js",
     "prod": "node dist/index.js -production",
-    "build":"node build.js && tsc -p .",
-    "deploy":"cd .. & git subtree push --prefix server/dist origin server-dist"
+    "build": "node build.js && tsc -p .",
+    "deploy": "cd .. & git subtree push --prefix server/dist origin server-dist"
   },
   "dependencies": {
     "async": "^2.0.0-rc.3",
@@ -19,7 +19,8 @@
     "morgan": "~1.7.0",
     "multer": "^1.1.0",
     "serve-favicon": "~2.3.0",
-    "socket.io": "^1.4.8"
+    "socket.io": "^1.4.8",
+    "socket.io-stream": "^0.9.0"
   },
   "devDependencies": {
     "typescript": "^1.8.10",
