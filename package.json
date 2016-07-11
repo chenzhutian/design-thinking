@@ -10,11 +10,13 @@
   "author": "zhutian",
   "license": "ISC",
   "dependencies": {
+    "node-aplay": "^1.0.3",
+    "node-arecord": "0.0.2",
     "onoff": "^1.1.1",
-    "socket.io-client": "^1.4.8",
-    "typescript": "^1.8.10"
+    "socket.io-client": "^1.4.8"
   },
   "devDependencies": {
+    "typescript": "^1.8.10",
     "shelljs": "^0.7.0",
     "tslint": "^3.13.0"
   }
