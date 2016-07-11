@@ -1,7 +1,6 @@
 "use strict";
 const Socket = require('socket.io');
 const decay_1 = require('../decay');
-const fs = require('fs');
 const nameSpace_js_1 = require('../nameSpace.js');
 const eventType_js_1 = require('../eventType.js');
 const messageController_1 = require('../controllers/messageController');
@@ -202,11 +201,6 @@ function attachIO(server) {
                 setInterval(() => {
                     socket.emit(eventType_js_1.TEST_PI, 3);
                 }, 5000);
-                fs.readFile('./resource/1.wav', (err, data) => {
-                    if (err)
-                        throw err;
-                    socket.emit('test_audio', data);
-                });
                 messageController_1.default.fetchUnReadTextMessage(targetType, (err, messages) => {
                     if (err)
                         throw err;
