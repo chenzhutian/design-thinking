@@ -1,0 +1,22 @@
+"use strict";
+const CONNECT = 'connect';
+exports.CONNECT = CONNECT;
+const LOGIN = 'LOGIN';
+exports.LOGIN = LOGIN;
+const LOGIN_RESULT = 'LOGIN_RESULT';
+exports.LOGIN_RESULT = LOGIN_RESULT;
+const TEST_PI = 'TEST_PI';
+exports.TEST_PI = TEST_PI;
+const MOVE_SLIDES = 'MOVE_SLIDES';
+exports.MOVE_SLIDES = MOVE_SLIDES;
+const MESSAGE = 'RECEIVE_MESSAGE';
+exports.MESSAGE = MESSAGE;
+const PUSH_UNREAD_MESSAGE = 'PUSH_UNREAD_MESSAGE';
+exports.PUSH_UNREAD_MESSAGE = PUSH_UNREAD_MESSAGE;
+const DECAY = 'DECAY';
+exports.DECAY = DECAY;
+const SEND_MESSAGE = 'SEND_MESSAGE';
+exports.SEND_MESSAGE = SEND_MESSAGE;
+const READ_MESSAGE = 'READ_MESSAGE';
+exports.READ_MESSAGE = READ_MESSAGE;
+//# sourceMappingURL=eventType.js.map
