@@ -1,7 +1,8 @@
 "use strict";
 const Socket = require('socket.io');
-const socket_const_1 = require('./socket-const');
 const decay_1 = require('../decay');
+const nameSpace_js_1 = require('../nameSpace.js');
+const eventType_js_1 = require('../eventType.js');
 const messageController_1 = require('../controllers/messageController');
 const PARENT = "parent";
 const CHILD = "child";
@@ -14,25 +15,25 @@ function attachIO(server) {
     const decayInitvalue = 100;
     const loginedAlbumUser = new Set();
     const loginedVaseUser = new Set();
-    io.of(socket_const_1.NS_ALBUM).on('connection', socket => {
+    io.of(nameSpace_js_1.NS_ALBUM).on('connection', socket => {
         console.info('user connect');
         let userName;
         let roomName;
         let targetType;
         let userType;
         let loginSuccess = false;
-        socket.on('login', (params) => {
+        socket.on(eventType_js_1.LOGIN, (params) => {
             console.info(params);
             if (!params || !params.roomName || !params.userName) {
-                socket.emit('login_res', { state: false, info: 'no login params' });
+                socket.emit(eventType_js_1.LOGIN_RESULT, { state: false, info: 'no login params' });
                 return;
             }
             if (params.userName !== 'daddy' && params.userName !== "boy") {
-                socket.emit('login_res', { state: false, info: 'wrong userName' });
+                socket.emit(eventType_js_1.LOGIN_RESULT, { state: false, info: 'wrong userName' });
                 return;
             }
             if (loginedAlbumUser.has(params.userName)) {
-                socket.emit('login_res', { state: false, info: 'this user already login' });
+                socket.emit(eventType_js_1.LOGIN_RESULT, { state: false, info: 'this user already login' });
                 return;
             }
             userName = params.userName;
@@ -66,26 +67,26 @@ function attachIO(server) {
                 if (joinRoomErr)
                     throw joinRoomErr;
                 console.info('join room success');
-                socket.emit('login_res', { state: true, info: 'login success', userType: userType });
+                socket.emit(eventType_js_1.LOGIN_RESULT, { state: true, info: 'login success', userType: userType });
                 loginSuccess = true;
                 loginedAlbumUser.add(userName);
                 messageController_1.default.fetchUnReadTextMessage(targetType, (err, messages) => {
                     if (err)
                         throw err;
                     if (messages.length) {
-                        socket.emit('unReadMessage', messages);
+                        socket.emit(eventType_js_1.PUSH_UNREAD_MESSAGE, messages);
                     }
                 });
             });
         });
-        socket.on('moveSlides', slidesIndex => {
+        socket.on(eventType_js_1.MOVE_SLIDES, slidesIndex => {
             if (!loginSuccess)
                 return;
             if (userType === PARENT) {
-                socket.in(roomName).emit('moveSlides', slidesIndex);
+                socket.in(roomName).emit(eventType_js_1.MOVE_SLIDES, slidesIndex);
             }
         });
-        socket.on('sendMessage', msg => {
+        socket.on(eventType_js_1.SEND_MESSAGE, msg => {
             if (!loginSuccess)
                 return;
             const room = roomNameToRooms[roomName];
@@ -103,7 +104,7 @@ function attachIO(server) {
                 messageController_1.default.insertTextMessage(message, (err, recordId) => {
                     if (err)
                         throw err;
-                    socket.in(roomName).emit('message', { content: msg, id: recordId });
+                    socket.in(roomName).emit(eventType_js_1.MESSAGE, { content: msg, id: recordId });
                 });
             }
             else {
@@ -113,7 +114,7 @@ function attachIO(server) {
                 });
             }
         });
-        socket.on('readMessage', messageId => {
+        socket.on(eventType_js_1.READ_MESSAGE, messageId => {
             if (!loginSuccess)
                 return;
             if (!messageId || !messageId.length)
@@ -142,25 +143,25 @@ function attachIO(server) {
             console.info('user disconnected');
         });
     });
-    io.of(socket_const_1.NS_VASE).on('connection', socket => {
+    io.of(nameSpace_js_1.NS_VASE).on('connection', socket => {
         console.info('user connect');
         let userName;
         let roomName;
         let targetType;
         let userType;
         let loginSuccess = false;
-        socket.on('login', (params) => {
+        socket.on(eventType_js_1.LOGIN, (params) => {
             console.info(params);
             if (!params || !params.roomName || !params.userName) {
-                socket.emit('login_res', { state: false, info: 'no login params' });
+                socket.emit(eventType_js_1.LOGIN_RESULT, { state: false, info: 'no login params' });
                 return;
             }
             if (params.userName !== 'daddy' && params.userName !== "boy") {
-                socket.emit('login_res', { state: false, info: 'wrong userName' });
+                socket.emit(eventType_js_1.LOGIN_RESULT, { state: false, info: 'wrong userName' });
                 return;
             }
             if (loginedVaseUser.has(params.userName)) {
-                socket.emit('login_res', { state: false, info: 'this user already login' });
+                socket.emit(eventType_js_1.LOGIN_RESULT, { state: false, info: 'this user already login' });
                 return;
             }
             userName = params.userName;
@@ -194,29 +195,29 @@ function attachIO(server) {
                 if (joinRoomErr)
                     throw joinRoomErr;
                 console.info('join room success');
-                socket.emit('login_res', { state: true, info: 'login success', userType: userType });
+                socket.emit(eventType_js_1.LOGIN_RESULT, { state: true, info: 'login success', userType: userType });
                 loginSuccess = true;
                 loginedVaseUser.add(userName);
                 setInterval(() => {
-                    socket.emit('test_pi', 3);
+                    socket.emit(eventType_js_1.TEST_PI, 3);
                 }, 5000);
                 messageController_1.default.fetchUnReadTextMessage(targetType, (err, messages) => {
                     if (err)
                         throw err;
                     if (messages.length) {
-                        socket.emit('unReadMessage', messages);
+                        socket.emit(eventType_js_1.PUSH_UNREAD_MESSAGE, messages);
                     }
                 });
             });
         });
-        socket.on('moveSlides', slidesIndex => {
+        socket.on(eventType_js_1.MOVE_SLIDES, slidesIndex => {
             if (!loginSuccess)
                 return;
             if (userType === PARENT) {
-                socket.in(roomName).emit('moveSlides', slidesIndex);
+                socket.in(roomName).emit(eventType_js_1.MOVE_SLIDES, slidesIndex);
             }
         });
-        socket.on('sendMessage', msg => {
+        socket.on(eventType_js_1.SEND_MESSAGE, msg => {
             if (!loginSuccess)
                 return;
             const room = roomNameToRooms[roomName];
@@ -234,7 +235,7 @@ function attachIO(server) {
                 messageController_1.default.insertTextMessage(message, (err, recordId) => {
                     if (err)
                         throw err;
-                    socket.in(roomName).emit('message', { content: msg, id: recordId });
+                    socket.in(roomName).emit(eventType_js_1.MESSAGE, { content: msg, id: recordId });
                 });
             }
             else {
@@ -244,7 +245,7 @@ function attachIO(server) {
                 });
             }
         });
-        socket.on('readMessage', messageId => {
+        socket.on(eventType_js_1.READ_MESSAGE, messageId => {
             if (!loginSuccess)
                 return;
             if (!messageId || !messageId.length)
@@ -276,7 +277,7 @@ function attachIO(server) {
     const timer = setInterval(() => {
         rooms.forEach(room => {
             const decayManager = room.decayManager;
-            io.of(socket_const_1.NS_ALBUM).in(room.roomName).emit('decay', decayManager.decayOnce(tickInterval));
+            io.of(nameSpace_js_1.NS_ALBUM).in(room.roomName).emit(eventType_js_1.DECAY, decayManager.decayOnce(tickInterval));
         });
     }, tickInterval);
     return io;
