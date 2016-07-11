@@ -1,5 +1,16 @@
 
 import Hammer from 'hammerjs';
+
+// event Type
+import {
+    MOVE_SLIDES,
+    MESSAGE,
+    PUSH_UNREAD_MESSAGE,
+    DECAY,
+    READ_MESSAGE,
+    SEND_MESSAGE,
+} from '../../eventType.js';
+
 export default {
     ready() {
         this.hammer = new Hammer(this.$els.wraper);
@@ -26,10 +37,10 @@ export default {
     methods: {
         setData(images, userType, userName, socket) {
             this.socket = socket;
-            this.socket.on('moveSlides', this.setCurrentSlide);
-            this.socket.on('message', this.receiveMessage);
-            this.socket.on('unReadMessage', this.receiveUnReadMessage);
-            this.socket.on('decay', this.handleDecay);
+            this.socket.on(MOVE_SLIDES, this.setCurrentSlide);
+            this.socket.on(MESSAGE, this.receiveMessage);
+            this.socket.on(PUSH_UNREAD_MESSAGE, this.receiveUnReadMessage);
+            this.socket.on(DECAY, this.handleDecay);
 
             this.userType = userType;
             this.userName = userName;
@@ -58,7 +69,7 @@ export default {
                 const ctx = canvas.getContext('2d');
                 const img = new Image();
                 // drawing of the test image - img1
-                img.onload = function () {
+                img.onload = () => {
                     // draw background image
                     ctx.drawImage(img, 0, 0);
                     // draw a box over the top
@@ -77,10 +88,10 @@ export default {
             this.$nextTick(() => {
                 this.setCurrentSlide(index);
             });
-            this.socket.emit('moveSlides', index);
+            this.socket.emit(MOVE_SLIDES, index);
         },
         sendMessage() {
-            this.socket.emit('sendMessage', `this is a message ${Math.random()}`);
+            this.socket.emit(SEND_MESSAGE, `this is a message ${Math.random()}`);
         },
         receiveMessage(message) {
             if (message.id) {
@@ -91,7 +102,7 @@ export default {
         readMessage() {
             this.imageComponentsStyle[4][1].opacity += 0.1;
             const msg = this.unReadMessage.shift();
-            this.socket.emit('readMessage', msg.id);
+            this.socket.emit(READ_MESSAGE, msg.id);
         },
         receiveUnReadMessage(messages) {
             if (!messages) return;

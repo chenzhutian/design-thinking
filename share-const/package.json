@@ -1,0 +1,22 @@
+{
+  "name": "design-thinking",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/unhealthy/design-thinking.git"
+  },
+  "author": "zhutian",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/unhealthy/design-thinking/issues"
+  },
+  "homepage": "https://github.com/unhealthy/design-thinking#readme",
+  "devDependencies": {
+    "shelljs": "^0.7.0"
+  }
+}

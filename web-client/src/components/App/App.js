@@ -4,6 +4,16 @@ import IO from 'socket.io-client';
 // components
 import Carousel from '../Carousel/Carousel.vue';
 
+// io namspace
+import { NS_ALBUM } from '../../nameSpace.js';
+
+// event Type
+import {
+    CONNECT,
+    LOGIN,
+    LOGIN_RESULT,
+} from '../../eventType.js';
+
 import image1 from '../../assets/1-min.jpg';
 import image2 from '../../assets/2-min.jpg';
 import image3 from '../../assets/3-min.jpg';
@@ -13,16 +23,16 @@ import image6 from '../../assets/6-min.jpg';
 
 export default {
     ready() {
-        this.socket = new IO('/ALBUM');
+        this.socket = new IO(NS_ALBUM);
 
-        this.socket.on('connect', () => {
+        this.socket.on(CONNECT, () => {
             const userName = localStorage.getItem('userName');
             if (userName) {
                 this.userName = userName;
                 this.login();
             }
         });
-        this.socket.on('login_res', res => {
+        this.socket.on(LOGIN_RESULT, res => {
             if (res.state) {
                 this.userType = res.userType;
                 localStorage.clear();
@@ -73,7 +83,7 @@ export default {
     methods: {
         login() {
             if (!this.userName || !this.userName.length) return;
-            this.socket.emit('login', {
+            this.socket.emit(LOGIN, {
                 userName: this.userName,
                 roomName: 'design-thinking',
             });

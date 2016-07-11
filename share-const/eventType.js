@@ -1,0 +1,29 @@
+
+/* -- Global --*/
+const CONNECT = 'connect';
+const LOGIN = 'LOGIN';
+const LOGIN_RESULT = 'LOGIN_RESULT';
+const TEST_PI = 'TEST_PI';
+
+/* -- web client --*/
+const MOVE_SLIDES = 'MOVE_SLIDES';
+const MESSAGE = 'RECEIVE_MESSAGE';
+const PUSH_UNREAD_MESSAGE = 'PUSH_UNREAD_MESSAGE';
+const DECAY = 'DECAY';
+const SEND_MESSAGE = 'SEND_MESSAGE';
+const READ_MESSAGE = 'READ_MESSAGE';
+
+/* -- Pi client --*/
+
+export {
+CONNECT,
+LOGIN,
+LOGIN_RESULT,
+TEST_PI,
+MOVE_SLIDES,
+MESSAGE,
+PUSH_UNREAD_MESSAGE,
+DECAY,
+SEND_MESSAGE,
+READ_MESSAGE,
+};

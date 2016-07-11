@@ -1,4 +1,4 @@
-import * as IO from 'socket.io-client';
+// import * as IO from 'socket.io-client';
 
 /**
  * MessageManager
