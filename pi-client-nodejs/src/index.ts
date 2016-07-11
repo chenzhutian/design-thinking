@@ -1,5 +1,4 @@
-import * as IO from 'socket.io-client';
-import * as onoff from 'onoff';
+import PiClient from './piClent';
 
 // get args
 const args = process.argv.slice(2);
@@ -10,13 +9,13 @@ if (userName !== 'daddy' && userName !== 'boy') {
     throw new Error('wrong user Name!');
 }
 
-const Gpio = onoff.Gpio;
-const led = new Gpio(16, 'out');
-const button = new Gpio(12, 'in', 'both');
-
+//const Gpio = onoff.Gpio;
+//const led = new Gpio(16, 'out');
+//const button = new Gpio(12, 'in', 'both');
+const piClent = new PiClient(hostUrl, userName);
 
 // release the resource when exit processing
-process.on('SIGINT', () => {
-    led.unexport();
-    button.unexport();
-});
+//process.on('SIGINT', () => {
+//    led.unexport();
+//    button.unexport();
+//});
