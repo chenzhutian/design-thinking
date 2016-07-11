@@ -8,9 +8,12 @@
 		"noImplicitAny": false,
 		"removeComments": true,
 		"preserveConstEnums": true,
-		"outDir": "./dist/"
+		"outDir": "./dist/",
+		"allowJs": true
 	},
 	"exclude": [
+		"dist",
+		"build.js",
 		"node_modules",
 		"bower_components",
 		"jspm_packages",
