@@ -7,7 +7,7 @@ const SENT_MESSAGE_PATH = './resource/sent';
 const RECEIVED_MESSAGE_PATH = './resource/received';
 const TEMP_RECORD_FILE = 'temp.wav';
 class MessageManager {
-    constructor(socket) {
+    constructor(socket, eventManager) {
         this._isPlaying = false;
         this._isRecording = false;
         this._recordTimeoutGap = 500;
@@ -90,6 +90,9 @@ class MessageManager {
                     this._isPlaying = false;
                 });
                 this._socket.emit(eventType_js_1.READ_MESSAGE, msg.id);
+                if (this._unReadMessage.length == 0) {
+                    this._eventManager.emit('emptyUnReadMessage');
+                }
             }
             else {
                 const fileName = this._receivedMessageFileList.shift();
@@ -112,6 +115,7 @@ class MessageManager {
         this._socket = socket;
         this._socket.on(eventType_js_1.MESSAGE, this.receiveMessage);
         this._socket.on(eventType_js_1.PUSH_UNREAD_MESSAGE, this.receiveUnreadMessages);
+        this._eventManager = eventManager;
     }
 }
 Object.defineProperty(exports, "__esModule", { value: true });

@@ -2,6 +2,7 @@
 import * as fs from 'fs';
 import * as PlaySound from 'node-aplay';
 import * as RecordSound from 'node-arecord';
+import * as events from 'events';
 import {
     MESSAGE,
     PUSH_UNREAD_MESSAGE,
@@ -36,7 +37,9 @@ export default class MessageManager {
     private _recordTimer: NodeJS.Timer;
     private _recordSound: Sound;
 
-    constructor(socket: SocketIOClient.Socket) {
+    private _eventManager: NodeJS.EventEmitter;
+
+    constructor(socket: SocketIOClient.Socket, eventManager: NodeJS.EventEmitter) {
         this._unReadMessage = [];
         // init received message files
         fs.readdir(RECEIVED_MESSAGE_PATH, (err, files) => {
@@ -50,6 +53,8 @@ export default class MessageManager {
         this._socket = socket;
         this._socket.on(MESSAGE, this.receiveMessage);
         this._socket.on(PUSH_UNREAD_MESSAGE, this.receiveUnreadMessages);
+
+        this._eventManager = eventManager;
     }
 
     public recordMessage = () => {
@@ -130,6 +135,9 @@ export default class MessageManager {
                 this._isPlaying = false;
             });
             this._socket.emit(READ_MESSAGE, msg.id);
+            if (this._unReadMessage.length == 0) {
+                this._eventManager.emit('emptyUnReadMessage');
+            }
         } else {
             const fileName = this._receivedMessageFileList.shift();
             const sound = new PlaySound(fileName);
