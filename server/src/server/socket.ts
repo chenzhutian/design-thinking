@@ -275,18 +275,23 @@ function attachIO(server): SocketIO.Server {
             const room = roomNameToRooms[roomName];
             if (!room) return;
             const message = {
-                content: msg,
+                content: "",
                 roomName,
                 userType: userType,
                 isRead: false,
                 isReceived: false,
             };
-            if (room[targetType].vase || room[targetType].album) { // TODO remove album
+            if (room[targetType].vase) { // TODO remove album
                 // target is connected
                 message.isReceived = true;
                 messageController.insertTextMessage(message, (err, recordId) => {
                     if (err) throw err;
-                    socket.in(roomName).emit(MESSAGE, { content: msg, id: recordId });
+                    socket.in(roomName).emit(MESSAGE, { buffer: msg, id: recordId });
+                    const filePath = `../resource/${userType}/${recordId}`;
+                    fs.writeFile(filePath, err => {
+                        if (err) throw err;
+                        console.info('write resource success');
+                    });
                 });
             } else {
                 messageController.insertTextMessage(message, err => {

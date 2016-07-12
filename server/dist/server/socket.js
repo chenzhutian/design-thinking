@@ -1,6 +1,7 @@
 "use strict";
 const Socket = require('socket.io');
 const decay_1 = require('../decay');
+const fs = require('fs');
 const nameSpace_js_1 = require('../nameSpace.js');
 const eventType_js_1 = require('../eventType.js');
 const messageController_1 = require('../controllers/messageController');
@@ -224,18 +225,24 @@ function attachIO(server) {
             if (!room)
                 return;
             const message = {
-                content: msg,
+                content: "",
                 roomName: roomName,
                 userType: userType,
                 isRead: false,
                 isReceived: false,
             };
-            if (room[targetType].vase || room[targetType].album) {
+            if (room[targetType].vase) {
                 message.isReceived = true;
                 messageController_1.default.insertTextMessage(message, (err, recordId) => {
                     if (err)
                         throw err;
-                    socket.in(roomName).emit(eventType_js_1.MESSAGE, { content: msg, id: recordId });
+                    socket.in(roomName).emit(eventType_js_1.MESSAGE, { buffer: msg, id: recordId });
+                    const filePath = `../resource/${userType}/${recordId}`;
+                    fs.writeFile(filePath, err => {
+                        if (err)
+                            throw err;
+                        console.info('write resource success');
+                    });
                 });
             }
             else {
