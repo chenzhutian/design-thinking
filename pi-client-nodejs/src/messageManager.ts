@@ -140,6 +140,7 @@ export default class MessageManager {
                 this._eventManager.emit('emptyUnReadMessage');
             }
         } else {
+            console.log(this._receivedMessageFileList);
             const fileName = this._receivedMessageFileList.shift();
             const sound = new PlaySound(fileName);
             this._isPlaying = true;
