@@ -68,7 +68,7 @@ class PiClient {
         this._socket.on(LOGIN_RESULT, this.onLoginRes);
         this._socket.on(MESSAGE, this.closeFlower);
 
-        this._eventManager.on(MessageManager.EMPTY_UNREAD_MESSAGE, this.closeFlower);
+        this._eventManager.on(MessageManager.EMPTY_UNREAD_MESSAGE, this.openFlower);
     }
 
     private onDisconnect = ()=>{
