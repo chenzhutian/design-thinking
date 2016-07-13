@@ -13,7 +13,8 @@
     "node-aplay": "^1.0.3",
     "node-arecord": "0.0.2",
     "onoff": "^1.1.1",
-    "socket.io-client": "^1.4.8"
+    "socket.io-client": "^1.4.8",
+    "pigpio": "0.3.4"
   },
   "devDependencies": {
     "typescript": "^1.8.10",
