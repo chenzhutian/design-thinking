@@ -101,10 +101,9 @@ class PiClient {
         this._socket.on(eventType_js_1.CONNECT, this.onConnect);
         this._socket.on(eventType_js_1.LOGIN_RESULT, this.onLoginRes);
         this._socket.on(eventType_js_1.MESSAGE, this.closeFlower);
-        this._eventManager.on(PiClient.EMPTY_UNREAD_MESSAGE, this.closeFlower);
+        this._eventManager.on(messageManager_1.default.EMPTY_UNREAD_MESSAGE, this.closeFlower);
     }
 }
-PiClient.EMPTY_UNREAD_MESSAGE = 'EMPTY_UNREAD_MESSAGE';
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.default = PiClient;
 //# sourceMappingURL=piClent.js.map

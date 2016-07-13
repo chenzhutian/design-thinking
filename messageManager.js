@@ -13,6 +13,7 @@ class MessageManager {
         this._recordTimeoutGap = 500;
         this.recordMessage = () => {
             if (this._isRecording) {
+                console.info('+0.5s');
                 clearTimeout(this._recordTimer);
             }
             else {
@@ -23,12 +24,16 @@ class MessageManager {
                     destination_folder: SENT_MESSAGE_PATH,
                     filename: TEMP_RECORD_FILE
                 });
-                this._recordSound.record();
                 this._isRecording = true;
+                console.info('begin to record');
+                this._recordSound.record();
+                console.info('ready to record');
             }
             this._recordTimer = setTimeout(() => {
+                this._recordSound.stop();
                 this._recordSound = null;
                 this._isRecording = false;
+                console.info('finish recording');
             }, this._recordTimeoutGap);
         };
         this.sendMesssage = () => {
@@ -96,7 +101,8 @@ class MessageManager {
                 });
                 this._socket.emit(eventType_js_1.READ_MESSAGE, msg.id);
                 if (this._unReadMessage.length == 0) {
-                    this._eventManager.emit('emptyUnReadMessage');
+                    console.info('emit empty unread_message');
+                    this._eventManager.emit(MessageManager.EMPTY_UNREAD_MESSAGE);
                 }
             }
             else {
@@ -127,6 +133,7 @@ class MessageManager {
         this._socket.on(eventType_js_1.PUSH_UNREAD_MESSAGE, this.receiveUnreadMessages);
     }
 }
+MessageManager.EMPTY_UNREAD_MESSAGE = 'EMPTY_UNREAD_MESSAGE';
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.default = MessageManager;
 //# sourceMappingURL=messageManager.js.map
