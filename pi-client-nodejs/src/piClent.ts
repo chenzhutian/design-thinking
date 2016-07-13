@@ -8,6 +8,7 @@ import * as events from 'events';
 import { NS_VASE } from './nameSpace.js';
 import {
     CONNECT,
+    DISCONNECT,
     LOGIN_RESULT,
     LOGIN,
     TEST_PI,
@@ -63,13 +64,19 @@ class PiClient {
         this._messageManager = new MessageManager(this._socket, this._eventManager);
 
         this._socket.on(CONNECT, this.onConnect);
+        this._socket.on(DISCONNECT, this.onDisconnect);
         this._socket.on(LOGIN_RESULT, this.onLoginRes);
         this._socket.on(MESSAGE, this.closeFlower);
 
         this._eventManager.on(MessageManager.EMPTY_UNREAD_MESSAGE, this.closeFlower);
     }
 
-
+    private onDisconnect = ()=>{
+        this._socket.off(TEST_PI);
+        this._playButton.unwatchAll();
+        this._sentButton.unwatchAll();
+        this._recordHandlerButton.unwatchAll();
+    }
 
     private onConnect = () => {
         console.info('connected');
