@@ -146,6 +146,7 @@ export default class MessageManager {
             sound.play();
             sound.on('complete', () => {
                 this._isPlaying = false;
+                console.info('complete playing');
             });
             this._receivedMessageFileList.push(fileName);
         }
