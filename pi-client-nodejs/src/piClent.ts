@@ -124,7 +124,9 @@ class PiClient {
             if (this._motorPulseWidth >= MOTOR_MAX_PULSEWIDTH) {
                 clearInterval(this._motorTimer);
             } else {
+                console.log(this._motorPulseWidth);
                 this._motorPulseWidth += this._motorIncremental;
+                this._motor.servoWrite(this._motorPulseWidth);
             }
         }, this._motorMoveTimeGap);
     }
