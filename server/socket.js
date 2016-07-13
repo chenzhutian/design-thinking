@@ -7,6 +7,7 @@ const eventType_js_1 = require('../eventType.js');
 const messageController_1 = require('../controllers/messageController');
 const PARENT = "parent";
 const CHILD = "child";
+const RESOURCE_PATH = '../resource';
 function attachIO(server) {
     const io = Socket(server);
     const userNameToUser = {};
@@ -71,13 +72,6 @@ function attachIO(server) {
                 socket.emit(eventType_js_1.LOGIN_RESULT, { state: true, info: 'login success', userType: userType });
                 loginSuccess = true;
                 loginedAlbumUser.add(userName);
-                messageController_1.default.fetchUnReadTextMessage(targetType, (err, messages) => {
-                    if (err)
-                        throw err;
-                    if (messages.length) {
-                        socket.emit(eventType_js_1.PUSH_UNREAD_MESSAGE, messages);
-                    }
-                });
             });
         });
         socket.on(eventType_js_1.MOVE_SLIDES, slidesIndex => {
@@ -86,44 +80,6 @@ function attachIO(server) {
             if (userType === PARENT) {
                 socket.in(roomName).emit(eventType_js_1.MOVE_SLIDES, slidesIndex);
             }
-        });
-        socket.on(eventType_js_1.SEND_MESSAGE, msg => {
-            if (!loginSuccess)
-                return;
-            const room = roomNameToRooms[roomName];
-            if (!room)
-                return;
-            const message = {
-                content: msg,
-                roomName: roomName,
-                userType: userType,
-                isRead: false,
-                isReceived: false,
-            };
-            if (room[targetType].album) {
-                message.isReceived = true;
-                messageController_1.default.insertTextMessage(message, (err, recordId) => {
-                    if (err)
-                        throw err;
-                    socket.in(roomName).emit(eventType_js_1.MESSAGE, { content: msg, id: recordId });
-                });
-            }
-            else {
-                messageController_1.default.insertTextMessage(message, err => {
-                    if (err)
-                        throw err;
-                });
-            }
-        });
-        socket.on(eventType_js_1.READ_MESSAGE, messageId => {
-            if (!loginSuccess)
-                return;
-            if (!messageId || !messageId.length)
-                return;
-            messageController_1.default.readTextMessage(messageId, (err, res) => {
-                if (err)
-                    throw err;
-            });
         });
         socket.on('disconnect', () => {
             if (!loginSuccess)
@@ -140,6 +96,7 @@ function attachIO(server) {
                     }
                 }
             }
+            loginSuccess = false;
             loginedAlbumUser.delete(userName);
             console.info('user disconnected');
         });
@@ -200,23 +157,28 @@ function attachIO(server) {
                 loginSuccess = true;
                 loginedVaseUser.add(userName);
                 setInterval(() => {
-                    socket.emit(eventType_js_1.TEST_PI, 3);
+                    socket.emit(eventType_js_1.TEST_PI, 'say Hi from server');
                 }, 5000);
                 messageController_1.default.fetchUnReadTextMessage(targetType, (err, messages) => {
                     if (err)
                         throw err;
                     if (messages.length) {
+                        for (let i = 0, len = messages.length; i < len; ++i) {
+                            const msg = messages[i];
+                            const filePath = `${RESOURCE_PATH}/${targetType}/${msg.id}.wav`;
+                            try {
+                                fs.accessSync(filePath);
+                                const buffer = fs.readFileSync(filePath);
+                                msg.buffer = buffer;
+                            }
+                            catch (err) {
+                                throw err;
+                            }
+                        }
                         socket.emit(eventType_js_1.PUSH_UNREAD_MESSAGE, messages);
                     }
                 });
             });
-        });
-        socket.on(eventType_js_1.MOVE_SLIDES, slidesIndex => {
-            if (!loginSuccess)
-                return;
-            if (userType === PARENT) {
-                socket.in(roomName).emit(eventType_js_1.MOVE_SLIDES, slidesIndex);
-            }
         });
         socket.on(eventType_js_1.SEND_MESSAGE, msg => {
             if (!loginSuccess)
@@ -225,19 +187,19 @@ function attachIO(server) {
             if (!room)
                 return;
             const message = {
-                content: "",
+                content: msg.buffer,
                 roomName: roomName,
                 userType: userType,
                 isRead: false,
                 isReceived: false,
             };
             if (room[targetType].vase) {
-                message.isReceived = true;
                 messageController_1.default.insertTextMessage(message, (err, recordId) => {
                     if (err)
                         throw err;
-                    socket.in(roomName).emit(eventType_js_1.MESSAGE, { buffer: msg, id: recordId });
-                    const filePath = `../resource/${userType}/${recordId}`;
+                    socket.in(roomName).emit(eventType_js_1.MESSAGE, { buffer: msg.buffer, id: recordId });
+                    message.isReceived = true;
+                    const filePath = `${RESOURCE_PATH}/${userType}/${recordId}.wav`;
                     fs.writeFile(filePath, err => {
                         if (err)
                             throw err;
@@ -246,9 +208,15 @@ function attachIO(server) {
                 });
             }
             else {
-                messageController_1.default.insertTextMessage(message, err => {
+                messageController_1.default.insertTextMessage(message, (err, recordId) => {
                     if (err)
                         throw err;
+                    const filePath = `${RESOURCE_PATH}/${userType}/${recordId}.wav`;
+                    fs.writeFile(filePath, err => {
+                        if (err)
+                            throw err;
+                        console.info('write resource success');
+                    });
                 });
             }
         });
@@ -270,13 +238,14 @@ function attachIO(server) {
                 if (!room[userType])
                     return;
                 room[userType].vase = null;
-                if (!room[userType].vase) {
+                if (!room[userType].album) {
                     delete room[userType];
                     if (!room[targetType]) {
                         delete roomNameToRooms[roomName];
                     }
                 }
             }
+            loginSuccess = false;
             loginedVaseUser.delete(userName);
             console.info('user disconnected');
         });
