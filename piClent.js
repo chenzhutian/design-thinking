@@ -14,7 +14,7 @@ const ROOM_NAME = 'design-thinking';
 class PiClient {
     constructor(hostUrl, userName) {
         this._loginSuccess = false;
-        this._playButton = new Gpio(27, 'in', 'both');
+        this._playButton = new Gpio(27, 'in', 'falling');
         this._sentButton = new Gpio(22, 'in', 'falling');
         this._recordHandlerButton = new Gpio(18, 'in', 'both');
         this._motor = new PWMGpio(17, { mode: PWMGpio.OUTPUT });
@@ -82,6 +82,7 @@ class PiClient {
                     clearInterval(this._motorTimer);
                 }
                 else {
+                    console.log(this._motorPulseWidth);
                     this._motorPulseWidth += this._motorIncremental;
                 }
             }, this._motorMoveTimeGap);
