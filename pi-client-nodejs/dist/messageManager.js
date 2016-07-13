@@ -10,7 +10,7 @@ class MessageManager {
     constructor(socket, eventManager) {
         this._isPlaying = false;
         this._isRecording = false;
-        this._recordTimeoutGap = 500;
+        this._recordTimeoutGap = 1500;
         this.recordMessage = (begin = true) => {
             this._isRecording = begin;
             if (this._isRecording) {
@@ -86,6 +86,7 @@ class MessageManager {
         this.readMessage = () => {
             if (this._isPlaying)
                 return;
+            console.log(this._unReadMessage);
             if (this._unReadMessage.length) {
                 const msg = this._unReadMessage.shift();
                 const fileName = `${RECEIVED_MESSAGE_PATH}/${msg.id}-unread.wav`;
