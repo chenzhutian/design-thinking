@@ -21,6 +21,12 @@ class PiClient {
         this._motorPulseWidth = 2500;
         this._motorIncremental = 100;
         this._motorMoveTimeGap = 100;
+        this.onDisconnect = () => {
+            this._socket.off(eventType_js_1.TEST_PI);
+            this._playButton.unwatchAll();
+            this._sentButton.unwatchAll();
+            this._recordHandlerButton.unwatchAll();
+        };
         this.onConnect = () => {
             console.info('connected');
             this._socket.emit(eventType_js_1.LOGIN, {
@@ -104,6 +110,7 @@ class PiClient {
         this._eventManager = new events.EventEmitter();
         this._messageManager = new messageManager_1.default(this._socket, this._eventManager);
         this._socket.on(eventType_js_1.CONNECT, this.onConnect);
+        this._socket.on(eventType_js_1.DISCONNECT, this.onDisconnect);
         this._socket.on(eventType_js_1.LOGIN_RESULT, this.onLoginRes);
         this._socket.on(eventType_js_1.MESSAGE, this.closeFlower);
         this._eventManager.on(messageManager_1.default.EMPTY_UNREAD_MESSAGE, this.closeFlower);
