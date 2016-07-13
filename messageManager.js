@@ -63,10 +63,11 @@ class MessageManager {
                     id: message.id,
                     content: message.content
                 });
-                fs.writeFile(`${RECEIVED_MESSAGE_PATH}/${message.id}-unread.wav`, message.buffer, err => {
+                const fileName = `${RECEIVED_MESSAGE_PATH}/${message.id}-unread.wav`;
+                fs.writeFile(fileName, message.buffer, err => {
                     if (err)
                         throw err;
-                    this._receivedMessageFileList.push(`${message.id}-unread.wav`);
+                    this._receivedMessageFileList.push(fileName);
                 });
             }
         };
