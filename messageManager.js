@@ -34,26 +34,28 @@ class MessageManager {
         this.sendMesssage = () => {
             if (this._isPlaying)
                 return;
-            if (fs.exists(`${SENT_MESSAGE_PATH}/${TEMP_RECORD_FILE}`)) {
-                fs.readFile(`${SENT_MESSAGE_PATH}/${TEMP_RECORD_FILE}`, (err, file) => {
-                    if (err)
-                        throw err;
-                    this._socket.emit(eventType_js_1.SEND_MESSAGE, file);
-                    const newFileName = `${SENT_MESSAGE_PATH}/sm${this._sentMessageFileList.length}.wav`;
-                    fs.rename(`${SENT_MESSAGE_PATH}/${TEMP_RECORD_FILE}`, newFileName);
-                    this._sentMessageFileList.push(newFileName);
-                });
-            }
-            else {
-                const fileName = this._sentMessageFileList.shift();
-                const sound = new PlaySound(fileName);
-                this._isPlaying = true;
-                sound.play();
-                sound.on('complete', () => {
-                    this._isPlaying = false;
-                });
-                this._sentMessageFileList.push(fileName);
-            }
+            fs.access(`${SENT_MESSAGE_PATH}/${TEMP_RECORD_FILE}`, err => {
+                if (err) {
+                    const fileName = this._sentMessageFileList.shift();
+                    const sound = new PlaySound(fileName);
+                    this._isPlaying = true;
+                    sound.play();
+                    sound.on('complete', () => {
+                        this._isPlaying = false;
+                    });
+                    this._sentMessageFileList.push(fileName);
+                }
+                else {
+                    fs.readFile(`${SENT_MESSAGE_PATH}/${TEMP_RECORD_FILE}`, (err, file) => {
+                        if (err)
+                            throw err;
+                        this._socket.emit(eventType_js_1.SEND_MESSAGE, { content: '', buffer: file });
+                        const newFileName = `${SENT_MESSAGE_PATH}/sm${this._sentMessageFileList.length}.wav`;
+                        fs.rename(`${SENT_MESSAGE_PATH}/${TEMP_RECORD_FILE}`, newFileName);
+                        this._sentMessageFileList.push(newFileName);
+                    });
+                }
+            });
         };
         this.receiveMessage = (message) => {
             if (message.id) {
@@ -105,6 +107,8 @@ class MessageManager {
                 this._receivedMessageFileList.push(fileName);
             }
         };
+        this._socket = socket;
+        this._eventManager = eventManager;
         this._unReadMessage = [];
         fs.readdir(RECEIVED_MESSAGE_PATH, (err, files) => {
             this._receivedMessageFileList = files.map(file => `${RECEIVED_MESSAGE_PATH}/${file}`);
@@ -112,10 +116,8 @@ class MessageManager {
         fs.readdir(SENT_MESSAGE_PATH, (err, files) => {
             this._sentMessageFileList = files.map(file => `${SENT_MESSAGE_PATH}/${file}`);
         });
-        this._socket = socket;
         this._socket.on(eventType_js_1.MESSAGE, this.receiveMessage);
         this._socket.on(eventType_js_1.PUSH_UNREAD_MESSAGE, this.receiveUnreadMessages);
-        this._eventManager = eventManager;
     }
 }
 Object.defineProperty(exports, "__esModule", { value: true });
