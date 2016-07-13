@@ -58,31 +58,27 @@ export default class MessageManager {
         this._socket.on(PUSH_UNREAD_MESSAGE, this.receiveUnreadMessages);
     }
 
-    public recordMessage = () => {
+    public recordMessage = (begin = true) => {
+        this._isRecording = begin;
         if (this._isRecording) {
-            // +0.5s
-            console.info('+0.5s');
             clearTimeout(this._recordTimer);
-        } else {
-            if (this._recordSound) {
-                throw new Error('record sound should be null');
-            }
+            if(this._recordSound) return;
             this._recordSound = new RecordSound({
                 destination_folder: SENT_MESSAGE_PATH,
                 filename: TEMP_RECORD_FILE
             });
 
             this._isRecording = true;
-            console.info('begin to record');
-            this._recordSound.record();
             console.info('ready to record');
+            this._recordSound.record();
+            console.info('begin to record');
+        } else {
+            this._recordTimer = setTimeout(() => {
+                this._recordSound.stop();
+                this._recordSound = null;
+                console.info('finish recording');
+            }, this._recordTimeoutGap);
         }
-        this._recordTimer = setTimeout(() => {
-            this._recordSound.stop();
-            this._recordSound = null;
-            this._isRecording = false;
-            console.info('finish recording');
-        }, this._recordTimeoutGap);
     }
 
     public sendMesssage = () => {

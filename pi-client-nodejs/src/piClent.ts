@@ -107,7 +107,9 @@ class PiClient {
                 if (err) throw err;
                 console.log(`recordHandler ${value}`);
                 if (value === 0) {
-                    this._messageManager.recordMessage();
+                    this._messageManager.recordMessage(true);
+                }else{
+                    this._messageManager.recordMessage(false);
                 }
             });
         } else {
