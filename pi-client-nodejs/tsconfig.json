@@ -12,6 +12,7 @@
 		"allowJs": true
 	},
 	"exclude": [
+		"dist",
 		"build.js",
 		"node_modules",
 		"bower_components",
