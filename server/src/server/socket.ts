@@ -298,7 +298,7 @@ function attachIO(server): SocketIO.Server {
         // sendMessage
         socket.on(SEND_MESSAGE, msg => {
             if (!loginSuccess) return;
-            
+            console.log('comme into send_message handler');
             const room = roomNameToRooms[roomName];
             if (!room) return;
             const message = {
@@ -308,6 +308,7 @@ function attachIO(server): SocketIO.Server {
                 isRead: false,
                 isReceived: false,
             };
+            console.log('send message detect target in online');
             if (room[targetType].vase) {
                 // target is connected
                 console.log(`${userType} try to insert message`);
