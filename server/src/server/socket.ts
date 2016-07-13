@@ -44,7 +44,7 @@ interface User {
 }
 
 
-const RESOURCE_PATH = '../resource';
+const RESOURCE_PATH = './resource';
 
 function attachIO(server): SocketIO.Server {
     const io: SocketIO.Server = Socket(server);
