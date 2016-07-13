@@ -254,7 +254,11 @@ function attachIO(server): SocketIO.Server {
             userNameToUser[userName].vase = socket.id;
 
             socket.join(roomName, joinRoomErr => {
-                if (joinRoomErr) throw joinRoomErr;
+                if (joinRoomErr) {
+                    console.error(joinRoomErr);
+                    socket.emit(LOGIN_RESULT, { state: false, info: 'join room failed' });
+                    return;
+                }
                 console.info('join room success');
                 // emit login success
                 socket.emit(LOGIN_RESULT, { state: true, info: 'login success', userType });
@@ -269,7 +273,10 @@ function attachIO(server): SocketIO.Server {
 
                 //fetch unread messsages
                 messageController.fetchUnReadMessage(targetType, (err, messages) => {
-                    if (err) throw err;
+                    if (err) {
+                        console.error(err);
+                        return;
+                    }
                     if (messages.length) {
                         for (let i = 0, len = messages.length; i < len; ++i) {
                             const msg = messages[i];
@@ -279,7 +286,7 @@ function attachIO(server): SocketIO.Server {
                                 const buffer = fs.readFileSync(filePath);
                                 msg.buffer = buffer;
                             } catch (err) {
-                                throw err;
+                                msg.buffer = new Buffer('');
                             }
                         }
                         socket.emit(PUSH_UNREAD_MESSAGE, messages);
@@ -303,13 +310,20 @@ function attachIO(server): SocketIO.Server {
             if (room[targetType].vase) {
                 // target is connected
                 messageController.insertMessage(message, (err, recordId) => {
-                    if (err) throw err;
+                    if (err) {
+                        console.error(err);
+                        return;
+                    }
                     socket.in(roomName).emit(MESSAGE, { buffer: msg.buffer, id: recordId });
                     message.isReceived = true;
                     const filePath = `${RESOURCE_PATH}/${userType}/${recordId}.wav`;
                     fs.writeFile(filePath, msg.buffer, err => {
-                        if (err) throw err;
-                        console.info('write resource success');
+                        if (err) {
+                            console.error(err.message);
+                            console.error(err.stack);
+                        } else {
+                            console.info('write resource success');
+                        }
                     });
                 });
             } else {
@@ -317,8 +331,12 @@ function attachIO(server): SocketIO.Server {
                     if (err) throw err;
                     const filePath = `${RESOURCE_PATH}/${userType}/${recordId}.wav`;
                     fs.writeFile(filePath, msg.buffer, err => {
-                        if (err) throw err;
-                        console.info('write resource success');
+                        if (err) {
+                            console.error(err.message);
+                            console.error(err.stack);
+                        } else {
+                            console.info('write resource success');
+                        }
                     });
                 });
             }
@@ -329,7 +347,9 @@ function attachIO(server): SocketIO.Server {
             if (!loginSuccess) return;
             if (!messageId || !messageId.length) return;
             messageController.readMessage(messageId, (err, res) => {
-                if (err) throw err;
+                if (err) {
+                    console.error(err);
+                }
             });
         });
 
