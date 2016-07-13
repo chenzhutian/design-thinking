@@ -22,10 +22,11 @@ class PiClient {
         this._motorIncremental = 100;
         this._motorMoveTimeGap = 100;
         this.onDisconnect = () => {
+            console.info('disconnect');
             this._socket.off(eventType_js_1.TEST_PI);
-            this._playButton.unwatchAll();
-            this._sentButton.unwatchAll();
-            this._recordHandlerButton.unwatchAll();
+            this._playButton.unwatch();
+            this._sentButton.unwatch();
+            this._recordHandlerButton.unwatch();
         };
         this.onConnect = () => {
             console.info('connected');
