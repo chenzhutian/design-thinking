@@ -47,7 +47,7 @@ class PiClient {
     private _messageManager: MessageManager;
     private _eventManager: NodeJS.EventEmitter;
 
-    private _playButton = new Gpio(27, 'in', 'both');
+    private _playButton = new Gpio(27, 'in', 'falling');
     private _sentButton = new Gpio(22, 'in', 'falling');
     private _recordHandlerButton = new Gpio(18, 'in', 'both');
     private _motor = new PWMGpio(17, { mode: PWMGpio.OUTPUT });
@@ -131,10 +131,12 @@ class PiClient {
         // from 2500 to 500
         console.log('try close the flower');
         this._motorIncremental = this._motorIncremental < 0 ? this._motorIncremental : -this._motorIncremental;
+
         this._motorTimer = setInterval(() => {
             if (this._motorPulseWidth <= MOTOR_MIN_PULSEWIDTH) {
                 clearInterval(this._motorTimer);
             } else {
+                console.log(this._motorPulseWidth);        
                 this._motorPulseWidth += this._motorIncremental;
             }
         }, this._motorMoveTimeGap);
