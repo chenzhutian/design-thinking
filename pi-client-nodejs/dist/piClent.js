@@ -15,7 +15,7 @@ class PiClient {
     constructor(hostUrl, userName) {
         this._loginSuccess = false;
         this._playButton = new Gpio(27, 'in', 'falling');
-        this._sentButton = new Gpio(22, 'in', 'both');
+        this._sentButton = new Gpio(22, 'in', 'falling');
         this._recordHandlerButton = new Gpio(18, 'in', 'both');
         this._motor = new PWMGpio(17, { mode: PWMGpio.OUTPUT });
         this._motorPulseWidth = 500;
@@ -37,31 +37,25 @@ class PiClient {
                 this._playButton.watch((err, value) => {
                     if (err)
                         throw err;
+                    console.log(`play ${value}`);
                     if (value === 0) {
                         this._messageManager.readMessage();
-                    }
-                    else {
-                        console.log(`play ${value}`);
                     }
                 });
                 this._sentButton.watch((err, value) => {
                     if (err)
                         throw err;
+                    console.log(`sentButton ${value}`);
                     if (value === 0) {
                         this._messageManager.sendMesssage();
-                    }
-                    else {
-                        console.log(`sentButton ${value}`);
                     }
                 });
                 this._recordHandlerButton.watch((err, value) => {
                     if (err)
                         throw err;
+                    console.log(`recordHandler ${value}`);
                     if (value === 0) {
                         this._messageManager.recordMessage();
-                    }
-                    else {
-                        console.log(`recordHandler ${value}`);
                     }
                 });
             }
