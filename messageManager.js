@@ -28,6 +28,8 @@ class MessageManager {
             }
             else {
                 this._recordTimer = setTimeout(() => {
+                    if (!this._recordSound)
+                        return;
                     this._recordSound.stop();
                     this._recordSound = null;
                     console.info('finish recording');
