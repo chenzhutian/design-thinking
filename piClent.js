@@ -18,7 +18,7 @@ class PiClient {
         this._sentButton = new Gpio(22, 'in', 'falling');
         this._recordHandlerButton = new Gpio(18, 'in', 'both');
         this._motor = new PWMGpio(17, { mode: PWMGpio.OUTPUT });
-        this._motorPulseWidth = 500;
+        this._motorPulseWidth = 2500;
         this._motorIncremental = 100;
         this._motorMoveTimeGap = 100;
         this.onConnect = () => {
