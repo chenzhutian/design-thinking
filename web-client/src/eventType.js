@@ -1,6 +1,7 @@
 
 /* -- Global --*/
 const CONNECT = 'connect';
+const DISCONNECT = 'disconnect';
 const LOGIN = 'LOGIN';
 const LOGIN_RESULT = 'LOGIN_RESULT';
 const TEST_PI = 'TEST_PI';
@@ -17,6 +18,7 @@ const READ_MESSAGE = 'READ_MESSAGE';
 
 export {
 CONNECT,
+DISCONNECT,
 LOGIN,
 LOGIN_RESULT,
 TEST_PI,

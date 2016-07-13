@@ -1,11 +1,12 @@
 
-/*-- Global --*/
+/* -- Global --*/
 const CONNECT = 'connect';
+const DISCONNECT = 'disconnect';
 const LOGIN = 'LOGIN';
 const LOGIN_RESULT = 'LOGIN_RESULT';
 const TEST_PI = 'TEST_PI';
 
-/*-- web client --*/
+/* -- web client --*/
 const MOVE_SLIDES = 'MOVE_SLIDES';
 const MESSAGE = 'RECEIVE_MESSAGE';
 const PUSH_UNREAD_MESSAGE = 'PUSH_UNREAD_MESSAGE';
@@ -13,10 +14,11 @@ const DECAY = 'DECAY';
 const SEND_MESSAGE = 'SEND_MESSAGE';
 const READ_MESSAGE = 'READ_MESSAGE';
 
-/*-- Pi client --*/
+/* -- Pi client --*/
 
 export {
 CONNECT,
+DISCONNECT,
 LOGIN,
 LOGIN_RESULT,
 TEST_PI,
@@ -26,4 +28,4 @@ PUSH_UNREAD_MESSAGE,
 DECAY,
 SEND_MESSAGE,
 READ_MESSAGE,
-}
+};
