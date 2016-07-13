@@ -24,6 +24,8 @@ const Gpio = onoff.Gpio;
 const PWMGpio = Pigpio.Gpio;
 const MOTOR_MAX_PULSEWIDTH = 2500;
 const MOTOR_MIN_PULSEWIDTH = 500;
+const ROOM_NAME = 'design-thinking';
+
 class PiClient {
     /*
     Event:
@@ -35,6 +37,9 @@ class PiClient {
             #Press Play button
             #Press Sent button
     */
+
+    static EMPTY_UNREAD_MESSAGE: string = 'EMPTY_UNREAD_MESSAGE';
+
     private _userName: string;
     private _userType: string;
     private _loginSuccess: boolean = false;
@@ -51,7 +56,6 @@ class PiClient {
     private _motorMoveTimeGap: number = 100;
     private _motorTimer: NodeJS.Timer;
 
-
     constructor(hostUrl, userName) {
         this._userName = userName;
         this._socket = IO(`${hostUrl}${NS_VASE}`);
@@ -62,7 +66,56 @@ class PiClient {
         this._socket.on(LOGIN_RESULT, this.onLoginRes);
         this._socket.on(MESSAGE, this.closeFlower);
 
-        this._eventManager.on('emptyUnReadMessage', this.closeFlower);
+        this._eventManager.on(PiClient.EMPTY_UNREAD_MESSAGE, this.closeFlower);
+    }
+
+
+
+    private onConnect = () => {
+        console.info('connected');
+        this._socket.emit(LOGIN, {
+            userName: this._userName,
+            roomName: ROOM_NAME
+        });
+    }
+
+    private onLoginRes = (res: LoginResult) => {
+        if (res.state) {
+            this._userType = res.userType;
+            this._loginSuccess = true;
+            console.log('loginSuccess');
+
+            this._socket.on(TEST_PI, msg => console.log(msg));
+            // regist buttons
+            this._playButton.watch((err, value) => {
+                if (err) throw err;
+                if (value === 0) {
+                    this._messageManager.readMessage();
+                } else {
+                    console.log(value);
+                }
+            });
+
+            this._sentButton.watch((err, value) => {
+                if (err) throw err;
+                if (value === 0) { // TODO it should be 0
+                    this._messageManager.sendMesssage();
+                } else {
+                    console.log(value);
+                }
+            });
+
+            this._recordHandlerButton.watch((err, value) => {
+                if (err) throw err;
+                if (value === 0) {
+                    this._messageManager.recordMessage();
+                } else {
+                    console.log(`recordHandler ${value}`);
+                }
+            });
+        } else {
+            console.warn(res.info);
+        }
     }
 
     private openFlower = () => {
@@ -89,52 +142,11 @@ class PiClient {
         }, this._motorMoveTimeGap);
     }
 
-    private onConnect = () => {
-        console.info('connected');
-        this._socket.emit(LOGIN, {
-            userName: this._userName,
-            roomName: 'design-thinking'
-        });
-    }
-
-    private onLoginRes = (res: LoginResult) => {
-        if (res.state) {
-            this._userType = res.userType;
-            this._loginSuccess = true;
-            console.log('loginSuccess');
-
-            this._socket.on(TEST_PI, msg => console.log(msg));
-            // regist buttons
-            this._playButton.watch((err, value) => {
-                if (err) throw err;
-
-                if (value === 1) {
-                    this._messageManager.readMessage();
-                } else {
-                    console.log(value);
-                }
-            });
-
-            this._sentButton.watch((err, value) => {
-                if (err) throw err;
-                if (value === 1) {
-                    this._messageManager.sendMesssage();
-                } else {
-                    console.log(value);
-                }
-            });
-
-            this._recordHandlerButton.watch((err, value) => {
-                if (err) throw err;
-                if (value === 0) {
-                    this._messageManager.recordMessage();
-                } else {
-                    console.log(`recordHandler ${value}`);
-                }
-            });
-        } else {
-            console.warn(res.info);
-        }
+    public clearAllGPIO = () => {
+        this._playButton.unexport();
+        this._sentButton.unexport();
+        this._recordHandlerButton.unexport();
+        this._motor.servoWrite(0);
     }
 }
 

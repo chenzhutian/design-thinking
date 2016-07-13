@@ -26,20 +26,23 @@ const SENT_MESSAGE_PATH = './resource/sent';
 const RECEIVED_MESSAGE_PATH = './resource/received';
 const TEMP_RECORD_FILE = 'temp.wav';
 export default class MessageManager {
+    private _eventManager: NodeJS.EventEmitter;
+    private _socket: SocketIOClient.Socket;
+
     private _unReadMessage: Array<Message>;
     private _receivedMessageFileList: Array<string>;
     private _sentMessageFileList: Array<string>;
-    private _socket: SocketIOClient.Socket;
-    private _isPlaying: boolean = false;
 
+    private _isPlaying: boolean = false;
     private _isRecording: boolean = false;
     private _recordTimeoutGap: number = 500;
     private _recordTimer: NodeJS.Timer;
     private _recordSound: Sound;
 
-    private _eventManager: NodeJS.EventEmitter;
-
     constructor(socket: SocketIOClient.Socket, eventManager: NodeJS.EventEmitter) {
+        this._socket = socket;
+        this._eventManager = eventManager;
+
         this._unReadMessage = [];
         // init received message files
         fs.readdir(RECEIVED_MESSAGE_PATH, (err, files) => {
@@ -49,12 +52,8 @@ export default class MessageManager {
         fs.readdir(SENT_MESSAGE_PATH, (err, files) => {
             this._sentMessageFileList = files.map(file => `${SENT_MESSAGE_PATH}/${file}`);
         });
-
-        this._socket = socket;
         this._socket.on(MESSAGE, this.receiveMessage);
         this._socket.on(PUSH_UNREAD_MESSAGE, this.receiveUnreadMessages);
-
-        this._eventManager = eventManager;
     }
 
     public recordMessage = () => {
@@ -80,24 +79,26 @@ export default class MessageManager {
 
     public sendMesssage = () => {
         if (this._isPlaying) return;
-        if (fs.exists(`${SENT_MESSAGE_PATH}/${TEMP_RECORD_FILE}`)) {
-            fs.readFile(`${SENT_MESSAGE_PATH}/${TEMP_RECORD_FILE}`, (err, file) => {
-                if (err) throw err;
-                this._socket.emit(SEND_MESSAGE, file);
-                const newFileName = `${SENT_MESSAGE_PATH}/sm${this._sentMessageFileList.length}.wav`;
-                fs.rename(`${SENT_MESSAGE_PATH}/${TEMP_RECORD_FILE}`, newFileName);
-                this._sentMessageFileList.push(newFileName);
-            });
-        } else {
-            const fileName = this._sentMessageFileList.shift();
-            const sound = new PlaySound(fileName);
-            this._isPlaying = true;
-            sound.play();
-            sound.on('complete', () => {
-                this._isPlaying = false;
-            });
-            this._sentMessageFileList.push(fileName);
-        }
+        fs.access(`${SENT_MESSAGE_PATH}/${TEMP_RECORD_FILE}`, err => {
+            if (err) {
+                const fileName = this._sentMessageFileList.shift();
+                const sound = new PlaySound(fileName);
+                this._isPlaying = true;
+                sound.play();
+                sound.on('complete', () => {
+                    this._isPlaying = false;
+                });
+                this._sentMessageFileList.push(fileName);
+            } else {
+                fs.readFile(`${SENT_MESSAGE_PATH}/${TEMP_RECORD_FILE}`, (err, file) => {
+                    if (err) throw err;
+                    this._socket.emit(SEND_MESSAGE, { content: '', buffer: file });
+                    const newFileName = `${SENT_MESSAGE_PATH}/sm${this._sentMessageFileList.length}.wav`;
+                    fs.rename(`${SENT_MESSAGE_PATH}/${TEMP_RECORD_FILE}`, newFileName);
+                    this._sentMessageFileList.push(newFileName);
+                });
+            }
+        });
     }
 
     private receiveMessage = (message: RawMessage) => {
