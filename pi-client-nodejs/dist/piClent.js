@@ -10,6 +10,7 @@ const Gpio = onoff.Gpio;
 const PWMGpio = Pigpio.Gpio;
 const MOTOR_MAX_PULSEWIDTH = 2500;
 const MOTOR_MIN_PULSEWIDTH = 500;
+const ROOM_NAME = 'design-thinking';
 class PiClient {
     constructor(hostUrl, userName) {
         this._loginSuccess = false;
@@ -20,6 +21,54 @@ class PiClient {
         this._motorPulseWidth = 500;
         this._motorIncremental = 100;
         this._motorMoveTimeGap = 100;
+        this.onConnect = () => {
+            console.info('connected');
+            this._socket.emit(eventType_js_1.LOGIN, {
+                userName: this._userName,
+                roomName: ROOM_NAME
+            });
+        };
+        this.onLoginRes = (res) => {
+            if (res.state) {
+                this._userType = res.userType;
+                this._loginSuccess = true;
+                console.log('loginSuccess');
+                this._socket.on(eventType_js_1.TEST_PI, msg => console.log(msg));
+                this._playButton.watch((err, value) => {
+                    if (err)
+                        throw err;
+                    if (value === 0) {
+                        this._messageManager.readMessage();
+                    }
+                    else {
+                        console.log(value);
+                    }
+                });
+                this._sentButton.watch((err, value) => {
+                    if (err)
+                        throw err;
+                    if (value === 0) {
+                        this._messageManager.sendMesssage();
+                    }
+                    else {
+                        console.log(value);
+                    }
+                });
+                this._recordHandlerButton.watch((err, value) => {
+                    if (err)
+                        throw err;
+                    if (value === 0) {
+                        this._messageManager.recordMessage();
+                    }
+                    else {
+                        console.log(`recordHandler ${value}`);
+                    }
+                });
+            }
+            else {
+                console.warn(res.info);
+            }
+        };
         this.openFlower = () => {
             this._motorIncremental = this._motorIncremental > 0 ? this._motorIncremental : -this._motorIncremental;
             this._motorTimer = setInterval(() => {
@@ -42,53 +91,11 @@ class PiClient {
                 }
             }, this._motorMoveTimeGap);
         };
-        this.onConnect = () => {
-            console.info('connected');
-            this._socket.emit(eventType_js_1.LOGIN, {
-                userName: this._userName,
-                roomName: 'design-thinking'
-            });
-        };
-        this.onLoginRes = (res) => {
-            if (res.state) {
-                this._userType = res.userType;
-                this._loginSuccess = true;
-                console.log('loginSuccess');
-                this._socket.on(eventType_js_1.TEST_PI, msg => console.log(msg));
-                this._playButton.watch((err, value) => {
-                    if (err)
-                        throw err;
-                    if (value === 1) {
-                        this._messageManager.readMessage();
-                    }
-                    else {
-                        console.log(value);
-                    }
-                });
-                this._sentButton.watch((err, value) => {
-                    if (err)
-                        throw err;
-                    if (value === 1) {
-                        this._messageManager.sendMesssage();
-                    }
-                    else {
-                        console.log(value);
-                    }
-                });
-                this._recordHandlerButton.watch((err, value) => {
-                    if (err)
-                        throw err;
-                    if (value === 0) {
-                        this._messageManager.recordMessage();
-                    }
-                    else {
-                        console.log(`recordHandler ${value}`);
-                    }
-                });
-            }
-            else {
-                console.warn(res.info);
-            }
+        this.clearAllGPIO = () => {
+            this._playButton.unexport();
+            this._sentButton.unexport();
+            this._recordHandlerButton.unexport();
+            this._motor.servoWrite(0);
         };
         this._userName = userName;
         this._socket = IO(`${hostUrl}${nameSpace_js_1.NS_VASE}`);
@@ -97,9 +104,10 @@ class PiClient {
         this._socket.on(eventType_js_1.CONNECT, this.onConnect);
         this._socket.on(eventType_js_1.LOGIN_RESULT, this.onLoginRes);
         this._socket.on(eventType_js_1.MESSAGE, this.closeFlower);
-        this._eventManager.on('emptyUnReadMessage', this.closeFlower);
+        this._eventManager.on(PiClient.EMPTY_UNREAD_MESSAGE, this.closeFlower);
     }
 }
+PiClient.EMPTY_UNREAD_MESSAGE = 'EMPTY_UNREAD_MESSAGE';
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.default = PiClient;
 //# sourceMappingURL=piClent.js.map

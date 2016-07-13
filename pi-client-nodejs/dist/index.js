@@ -8,4 +8,5 @@ if (userName !== 'daddy' && userName !== 'boy') {
     throw new Error('wrong user Name!');
 }
 const piClent = new piClent_1.default(hostUrl, userName);
+process.on('SIGINT', piClent.clearAllGPIO);
 //# sourceMappingURL=index.js.map
