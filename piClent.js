@@ -75,6 +75,7 @@ class PiClient {
             }, this._motorMoveTimeGap);
         };
         this.closeFlower = () => {
+            console.log('try close the flower');
             this._motorIncremental = this._motorIncremental < 0 ? this._motorIncremental : -this._motorIncremental;
             this._motorTimer = setInterval(() => {
                 if (this._motorPulseWidth <= MOTOR_MIN_PULSEWIDTH) {
