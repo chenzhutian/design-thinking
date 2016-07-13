@@ -47,7 +47,7 @@ class PiClient {
     private _messageManager: MessageManager;
     private _eventManager: NodeJS.EventEmitter;
 
-    private _playButton = new Gpio(27, 'in', 'falling');
+    private _playButton = new Gpio(27, 'in', 'both');
     private _sentButton = new Gpio(22, 'in', 'falling');
     private _recordHandlerButton = new Gpio(18, 'in', 'both');
     private _motor = new PWMGpio(17, { mode: PWMGpio.OUTPUT });
