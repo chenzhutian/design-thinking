@@ -298,6 +298,7 @@ function attachIO(server): SocketIO.Server {
         // sendMessage
         socket.on(SEND_MESSAGE, msg => {
             if (!loginSuccess) return;
+            
             const room = roomNameToRooms[roomName];
             if (!room) return;
             const message = {
@@ -309,11 +310,13 @@ function attachIO(server): SocketIO.Server {
             };
             if (room[targetType].vase) {
                 // target is connected
+                console.log(`${userType} try to insert message`);
                 messageController.insertMessage(message, (err, recordId) => {
                     if (err) {
                         console.error(err);
                         return;
                     }
+                    console.log(`${userType} try to send message`);
                     socket.in(roomName).emit(MESSAGE, { buffer: msg.buffer, id: recordId });
                     message.isReceived = true;
                     const filePath = `${RESOURCE_PATH}/${userType}/${recordId}.wav`;
