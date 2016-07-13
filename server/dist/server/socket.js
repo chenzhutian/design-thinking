@@ -199,11 +199,13 @@ function attachIO(server) {
                 isReceived: false,
             };
             if (room[targetType].vase) {
+                console.log(`${userType} try to insert message`);
                 messageController_1.default.insertMessage(message, (err, recordId) => {
                     if (err) {
                         console.error(err);
                         return;
                     }
+                    console.log(`${userType} try to send message`);
                     socket.in(roomName).emit(eventType_js_1.MESSAGE, { buffer: msg.buffer, id: recordId });
                     message.isReceived = true;
                     const filePath = `${RESOURCE_PATH}/${userType}/${recordId}.wav`;
