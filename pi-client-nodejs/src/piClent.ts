@@ -38,7 +38,7 @@ class PiClient {
             #Press Sent button
     */
 
-    static EMPTY_UNREAD_MESSAGE: string = 'EMPTY_UNREAD_MESSAGE';
+
 
     private _userName: string;
     private _userType: string;
@@ -66,7 +66,7 @@ class PiClient {
         this._socket.on(LOGIN_RESULT, this.onLoginRes);
         this._socket.on(MESSAGE, this.closeFlower);
 
-        this._eventManager.on(PiClient.EMPTY_UNREAD_MESSAGE, this.closeFlower);
+        this._eventManager.on(MessageManager.EMPTY_UNREAD_MESSAGE, this.closeFlower);
     }
 
 
@@ -136,7 +136,7 @@ class PiClient {
             if (this._motorPulseWidth <= MOTOR_MIN_PULSEWIDTH) {
                 clearInterval(this._motorTimer);
             } else {
-                console.log(this._motorPulseWidth);        
+                console.log(this._motorPulseWidth);
                 this._motorPulseWidth += this._motorIncremental;
                 this._motor.servoWrite(this._motorPulseWidth);
             }

@@ -26,6 +26,8 @@ const SENT_MESSAGE_PATH = './resource/sent';
 const RECEIVED_MESSAGE_PATH = './resource/received';
 const TEMP_RECORD_FILE = 'temp.wav';
 export default class MessageManager {
+    static EMPTY_UNREAD_MESSAGE: string = 'EMPTY_UNREAD_MESSAGE';
+
     private _eventManager: NodeJS.EventEmitter;
     private _socket: SocketIOClient.Socket;
 
@@ -59,6 +61,7 @@ export default class MessageManager {
     public recordMessage = () => {
         if (this._isRecording) {
             // +0.5s
+            console.info('+0.5s');
             clearTimeout(this._recordTimer);
         } else {
             if (this._recordSound) {
@@ -69,11 +72,14 @@ export default class MessageManager {
                 filename: TEMP_RECORD_FILE
             });
             this._recordSound.record();
+            console.info('ready to record');
             this._isRecording = true;
         }
         this._recordTimer = setTimeout(() => {
+            this._recordSound.stop();
             this._recordSound = null;
             this._isRecording = false;
+            console.info('finish recording');
         }, this._recordTimeoutGap);
     }
 
@@ -81,7 +87,7 @@ export default class MessageManager {
         if (this._isPlaying) return;
         fs.access(`${SENT_MESSAGE_PATH}/${TEMP_RECORD_FILE}`, err => {
             if (err) {
-                if(this._sentMessageFileList.length === 0) return;
+                if (this._sentMessageFileList.length === 0) return;
                 const fileName = this._sentMessageFileList.shift();
                 const sound = new PlaySound(fileName);
                 this._isPlaying = true;
@@ -139,7 +145,8 @@ export default class MessageManager {
             });
             this._socket.emit(READ_MESSAGE, msg.id);
             if (this._unReadMessage.length == 0) {
-                this._eventManager.emit('emptyUnReadMessage');
+                console.info('emit empty unread_message');
+                this._eventManager.emit(MessageManager.EMPTY_UNREAD_MESSAGE);
             }
         } else {
             console.log(this._receivedMessageFileList);
