@@ -159,7 +159,7 @@ function attachIO(server) {
                 setInterval(() => {
                     socket.emit(eventType_js_1.TEST_PI, 'say Hi from server');
                 }, 5000);
-                messageController_1.default.fetchUnReadTextMessage(targetType, (err, messages) => {
+                messageController_1.default.fetchUnReadMessage(targetType, (err, messages) => {
                     if (err)
                         throw err;
                     if (messages.length) {
@@ -194,7 +194,7 @@ function attachIO(server) {
                 isReceived: false,
             };
             if (room[targetType].vase) {
-                messageController_1.default.insertTextMessage(message, (err, recordId) => {
+                messageController_1.default.insertMessage(message, (err, recordId) => {
                     if (err)
                         throw err;
                     socket.in(roomName).emit(eventType_js_1.MESSAGE, { buffer: msg.buffer, id: recordId });
@@ -208,7 +208,7 @@ function attachIO(server) {
                 });
             }
             else {
-                messageController_1.default.insertTextMessage(message, (err, recordId) => {
+                messageController_1.default.insertMessage(message, (err, recordId) => {
                     if (err)
                         throw err;
                     const filePath = `${RESOURCE_PATH}/${userType}/${recordId}.wav`;
@@ -225,7 +225,7 @@ function attachIO(server) {
                 return;
             if (!messageId || !messageId.length)
                 return;
-            messageController_1.default.readTextMessage(messageId, (err, res) => {
+            messageController_1.default.readMessage(messageId, (err, res) => {
                 if (err)
                     throw err;
             });
