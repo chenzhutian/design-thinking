@@ -36,6 +36,8 @@ class MessageManager {
                 return;
             fs.access(`${SENT_MESSAGE_PATH}/${TEMP_RECORD_FILE}`, err => {
                 if (err) {
+                    if (this._sentMessageFileList.length === 0)
+                        return;
                     const fileName = this._sentMessageFileList.shift();
                     const sound = new PlaySound(fileName);
                     this._isPlaying = true;
@@ -99,6 +101,8 @@ class MessageManager {
             }
             else {
                 console.log(this._receivedMessageFileList);
+                if (this._receivedMessageFileList.length === 0)
+                    return;
                 const fileName = this._receivedMessageFileList.shift();
                 const sound = new PlaySound(fileName);
                 this._isPlaying = true;
