@@ -96,12 +96,14 @@ export default class MessageManager {
                 });
                 this._sentMessageFileList.push(fileName);
             } else {
-                fs.readFile(`${SENT_MESSAGE_PATH}/${TEMP_RECORD_FILE}`, (err, file) => {
+                const fileName = `${SENT_MESSAGE_PATH}/${TEMP_RECORD_FILE}`;
+                fs.readFile(fileName, (err, file) => {
                     if (err) throw err;
                     try {
                         const newFileName = `${SENT_MESSAGE_PATH}/sm${this._sentMessageFileList.length}.wav`;
-                        fs.rename(`${SENT_MESSAGE_PATH}/${TEMP_RECORD_FILE}`, newFileName);
+                        fs.rename(fileName, newFileName);
                         this._sentMessageFileList.push(newFileName);
+                        console.log('now we want to send a file');
                         this._socket.emit(SEND_MESSAGE, { content: '', buffer: file });
                     } catch (renameErr) {
                         console.error(renameErr);
