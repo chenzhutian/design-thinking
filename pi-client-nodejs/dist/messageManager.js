@@ -11,30 +11,28 @@ class MessageManager {
         this._isPlaying = false;
         this._isRecording = false;
         this._recordTimeoutGap = 500;
-        this.recordMessage = () => {
+        this.recordMessage = (begin = true) => {
+            this._isRecording = begin;
             if (this._isRecording) {
-                console.info('+0.5s');
                 clearTimeout(this._recordTimer);
-            }
-            else {
-                if (this._recordSound) {
-                    throw new Error('record sound should be null');
-                }
+                if (this._recordSound)
+                    return;
                 this._recordSound = new RecordSound({
                     destination_folder: SENT_MESSAGE_PATH,
                     filename: TEMP_RECORD_FILE
                 });
                 this._isRecording = true;
-                console.info('begin to record');
-                this._recordSound.record();
                 console.info('ready to record');
+                this._recordSound.record();
+                console.info('begin to record');
             }
-            this._recordTimer = setTimeout(() => {
-                this._recordSound.stop();
-                this._recordSound = null;
-                this._isRecording = false;
-                console.info('finish recording');
-            }, this._recordTimeoutGap);
+            else {
+                this._recordTimer = setTimeout(() => {
+                    this._recordSound.stop();
+                    this._recordSound = null;
+                    console.info('finish recording');
+                }, this._recordTimeoutGap);
+            }
         };
         this.sendMesssage = () => {
             if (this._isPlaying)
