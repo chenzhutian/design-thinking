@@ -47,7 +47,7 @@ class PiClient {
     private _messageManager: MessageManager;
     private _eventManager: NodeJS.EventEmitter;
 
-    private _playButton = new Gpio(27, 'in', 'both');
+    private _playButton = new Gpio(27, 'in', 'falling');
     private _sentButton = new Gpio(22, 'in', 'both');
     private _recordHandlerButton = new Gpio(18, 'in', 'both');
     private _motor = new PWMGpio(17, { mode: PWMGpio.OUTPUT });
@@ -92,7 +92,7 @@ class PiClient {
                 if (value === 0) {
                     this._messageManager.readMessage();
                 } else {
-                    console.log(value);
+                    console.log(`play ${value}`);
                 }
             });
 
@@ -101,7 +101,7 @@ class PiClient {
                 if (value === 0) { // TODO it should be 0
                     this._messageManager.sendMesssage();
                 } else {
-                    console.log(value);
+                    console.log(`sentButton ${value}`);
                 }
             });
 
