@@ -150,8 +150,11 @@ function attachIO(server) {
             }
             userNameToUser[userName].vase = socket.id;
             socket.join(roomName, joinRoomErr => {
-                if (joinRoomErr)
-                    throw joinRoomErr;
+                if (joinRoomErr) {
+                    console.error(joinRoomErr);
+                    socket.emit(eventType_js_1.LOGIN_RESULT, { state: false, info: 'join room failed' });
+                    return;
+                }
                 console.info('join room success');
                 socket.emit(eventType_js_1.LOGIN_RESULT, { state: true, info: 'login success', userType: userType });
                 loginSuccess = true;
@@ -160,8 +163,10 @@ function attachIO(server) {
                     socket.emit(eventType_js_1.TEST_PI, 'say Hi from server');
                 }, 5000);
                 messageController_1.default.fetchUnReadMessage(targetType, (err, messages) => {
-                    if (err)
-                        throw err;
+                    if (err) {
+                        console.error(err);
+                        return;
+                    }
                     if (messages.length) {
                         for (let i = 0, len = messages.length; i < len; ++i) {
                             const msg = messages[i];
@@ -172,7 +177,7 @@ function attachIO(server) {
                                 msg.buffer = buffer;
                             }
                             catch (err) {
-                                throw err;
+                                msg.buffer = new Buffer('');
                             }
                         }
                         socket.emit(eventType_js_1.PUSH_UNREAD_MESSAGE, messages);
@@ -195,15 +200,21 @@ function attachIO(server) {
             };
             if (room[targetType].vase) {
                 messageController_1.default.insertMessage(message, (err, recordId) => {
-                    if (err)
-                        throw err;
+                    if (err) {
+                        console.error(err);
+                        return;
+                    }
                     socket.in(roomName).emit(eventType_js_1.MESSAGE, { buffer: msg.buffer, id: recordId });
                     message.isReceived = true;
                     const filePath = `${RESOURCE_PATH}/${userType}/${recordId}.wav`;
                     fs.writeFile(filePath, msg.buffer, err => {
-                        if (err)
-                            throw err;
-                        console.info('write resource success');
+                        if (err) {
+                            console.error(err.message);
+                            console.error(err.stack);
+                        }
+                        else {
+                            console.info('write resource success');
+                        }
                     });
                 });
             }
@@ -213,9 +224,13 @@ function attachIO(server) {
                         throw err;
                     const filePath = `${RESOURCE_PATH}/${userType}/${recordId}.wav`;
                     fs.writeFile(filePath, msg.buffer, err => {
-                        if (err)
-                            throw err;
-                        console.info('write resource success');
+                        if (err) {
+                            console.error(err.message);
+                            console.error(err.stack);
+                        }
+                        else {
+                            console.info('write resource success');
+                        }
                     });
                 });
             }
@@ -226,8 +241,9 @@ function attachIO(server) {
             if (!messageId || !messageId.length)
                 return;
             messageController_1.default.readMessage(messageId, (err, res) => {
-                if (err)
-                    throw err;
+                if (err) {
+                    console.error(err);
+                }
             });
         });
         socket.on('disconnect', () => {
