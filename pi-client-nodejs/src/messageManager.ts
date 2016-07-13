@@ -46,11 +46,11 @@ export default class MessageManager {
         this._unReadMessage = [];
         // init received message files
         fs.readdir(RECEIVED_MESSAGE_PATH, (err, files) => {
-            this._receivedMessageFileList = files.map(file => `${RECEIVED_MESSAGE_PATH}/${file}`);
+            this._receivedMessageFileList = files.filter(file => file !== '.gitkeep').map(file => `${RECEIVED_MESSAGE_PATH}/${file}`);
         });
         // init sent message files
         fs.readdir(SENT_MESSAGE_PATH, (err, files) => {
-            this._sentMessageFileList = files.map(file => `${SENT_MESSAGE_PATH}/${file}`);
+            this._sentMessageFileList = files.filter(file => file !== '.gitkeep').map(file => `${SENT_MESSAGE_PATH}/${file}`);
         });
         this._socket.on(MESSAGE, this.receiveMessage);
         this._socket.on(PUSH_UNREAD_MESSAGE, this.receiveUnreadMessages);
