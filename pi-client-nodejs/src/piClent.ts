@@ -72,10 +72,11 @@ class PiClient {
     }
 
     private onDisconnect = ()=>{
+        console.info('disconnect');
         this._socket.off(TEST_PI);
-        this._playButton.unwatchAll();
-        this._sentButton.unwatchAll();
-        this._recordHandlerButton.unwatchAll();
+        this._playButton.unwatch();
+        this._sentButton.unwatch();
+        this._recordHandlerButton.unwatch();
     }
 
     private onConnect = () => {
