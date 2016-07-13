@@ -307,7 +307,7 @@ function attachIO(server): SocketIO.Server {
                     socket.in(roomName).emit(MESSAGE, { buffer: msg.buffer, id: recordId });
                     message.isReceived = true;
                     const filePath = `${RESOURCE_PATH}/${userType}/${recordId}.wav`;
-                    fs.writeFile(filePath, err => {
+                    fs.writeFile(filePath, msg.buffer, err => {
                         if (err) throw err;
                         console.info('write resource success');
                     });
@@ -316,7 +316,7 @@ function attachIO(server): SocketIO.Server {
                 messageController.insertMessage(message, (err, recordId) => {
                     if (err) throw err;
                     const filePath = `${RESOURCE_PATH}/${userType}/${recordId}.wav`;
-                    fs.writeFile(filePath, err => {
+                    fs.writeFile(filePath, msg.buffer, err => {
                         if (err) throw err;
                         console.info('write resource success');
                     });
