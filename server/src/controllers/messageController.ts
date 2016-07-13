@@ -1,3 +1,4 @@
+import * as fs from 'fs';
 import MessageData from '../models/messageData';
 import TextMessageData from '../models/textMessageData';
 
