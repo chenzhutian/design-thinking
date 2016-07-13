@@ -7,7 +7,7 @@ const eventType_js_1 = require('../eventType.js');
 const messageController_1 = require('../controllers/messageController');
 const PARENT = "parent";
 const CHILD = "child";
-const RESOURCE_PATH = '../resource';
+const RESOURCE_PATH = './resource';
 function attachIO(server) {
     const io = Socket(server);
     const userNameToUser = {};
