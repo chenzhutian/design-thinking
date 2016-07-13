@@ -71,9 +71,11 @@ export default class MessageManager {
                 destination_folder: SENT_MESSAGE_PATH,
                 filename: TEMP_RECORD_FILE
             });
+
+            this._isRecording = true;
+            console.info('begin to record');
             this._recordSound.record();
             console.info('ready to record');
-            this._isRecording = true;
         }
         this._recordTimer = setTimeout(() => {
             this._recordSound.stop();
