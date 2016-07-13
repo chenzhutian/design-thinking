@@ -14,7 +14,7 @@ const ROOM_NAME = 'design-thinking';
 class PiClient {
     constructor(hostUrl, userName) {
         this._loginSuccess = false;
-        this._playButton = new Gpio(27, 'in', 'both');
+        this._playButton = new Gpio(27, 'in', 'falling');
         this._sentButton = new Gpio(22, 'in', 'both');
         this._recordHandlerButton = new Gpio(18, 'in', 'both');
         this._motor = new PWMGpio(17, { mode: PWMGpio.OUTPUT });
@@ -41,7 +41,7 @@ class PiClient {
                         this._messageManager.readMessage();
                     }
                     else {
-                        console.log(value);
+                        console.log(`play ${value}`);
                     }
                 });
                 this._sentButton.watch((err, value) => {
@@ -51,7 +51,7 @@ class PiClient {
                         this._messageManager.sendMesssage();
                     }
                     else {
-                        console.log(value);
+                        console.log(`sentButton ${value}`);
                     }
                 });
                 this._recordHandlerButton.watch((err, value) => {
