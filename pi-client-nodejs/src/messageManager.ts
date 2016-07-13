@@ -37,7 +37,7 @@ export default class MessageManager {
 
     private _isPlaying: boolean = false;
     private _isRecording: boolean = false;
-    private _recordTimeoutGap: number = 500;
+    private _recordTimeoutGap: number = 1500;
     private _recordTimer: NodeJS.Timer;
     private _recordSound: Sound;
 
@@ -128,6 +128,8 @@ export default class MessageManager {
 
     public readMessage = () => {
         if (this._isPlaying) return;
+        console.log(this._unReadMessage);
+        
         if (this._unReadMessage.length) {
             const msg = this._unReadMessage.shift();
             const fileName = `${RECEIVED_MESSAGE_PATH}/${msg.id}-unread.wav`;
