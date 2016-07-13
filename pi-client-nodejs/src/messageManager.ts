@@ -62,7 +62,7 @@ export default class MessageManager {
         this._isRecording = begin;
         if (this._isRecording) {
             clearTimeout(this._recordTimer);
-            if(this._recordSound) return;
+            if (this._recordSound) return;
             this._recordSound = new RecordSound({
                 destination_folder: SENT_MESSAGE_PATH,
                 filename: TEMP_RECORD_FILE
@@ -74,6 +74,7 @@ export default class MessageManager {
             console.info('begin to record');
         } else {
             this._recordTimer = setTimeout(() => {
+                if (!this._recordSound) return;
                 this._recordSound.stop();
                 this._recordSound = null;
                 console.info('finish recording');
