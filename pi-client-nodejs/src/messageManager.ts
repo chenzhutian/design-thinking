@@ -81,6 +81,7 @@ export default class MessageManager {
         if (this._isPlaying) return;
         fs.access(`${SENT_MESSAGE_PATH}/${TEMP_RECORD_FILE}`, err => {
             if (err) {
+                if(this._sentMessageFileList.length === 0) return;
                 const fileName = this._sentMessageFileList.shift();
                 const sound = new PlaySound(fileName);
                 this._isPlaying = true;
@@ -107,7 +108,7 @@ export default class MessageManager {
                 id: message.id,
                 content: message.content
             });
-            const fileName = `${RECEIVED_MESSAGE_PATH}/${message.id}-unread.wav`; 
+            const fileName = `${RECEIVED_MESSAGE_PATH}/${message.id}-unread.wav`;
             fs.writeFile(fileName, message.buffer, err => {
                 if (err) throw err;
                 this._receivedMessageFileList.push(fileName);
@@ -142,6 +143,7 @@ export default class MessageManager {
             }
         } else {
             console.log(this._receivedMessageFileList);
+            if (this._receivedMessageFileList.length === 0) return;
             const fileName = this._receivedMessageFileList.shift();
             const sound = new PlaySound(fileName);
             this._isPlaying = true;
