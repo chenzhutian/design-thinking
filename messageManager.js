@@ -97,6 +97,7 @@ class MessageManager {
                 }
             }
             else {
+                console.log(this._receivedMessageFileList);
                 const fileName = this._receivedMessageFileList.shift();
                 const sound = new PlaySound(fileName);
                 this._isPlaying = true;
