@@ -268,7 +268,7 @@ function attachIO(server): SocketIO.Server {
                 }, 5000);
 
                 //fetch unread messsages
-                messageController.fetchUnReadTextMessage(targetType, (err, messages) => {
+                messageController.fetchUnReadMessage(targetType, (err, messages) => {
                     if (err) throw err;
                     if (messages.length) {
                         for (let i = 0, len = messages.length; i < len; ++i) {
@@ -302,7 +302,7 @@ function attachIO(server): SocketIO.Server {
             };
             if (room[targetType].vase) {
                 // target is connected
-                messageController.insertTextMessage(message, (err, recordId) => {
+                messageController.insertMessage(message, (err, recordId) => {
                     if (err) throw err;
                     socket.in(roomName).emit(MESSAGE, { buffer: msg.buffer, id: recordId });
                     message.isReceived = true;
@@ -313,7 +313,7 @@ function attachIO(server): SocketIO.Server {
                     });
                 });
             } else {
-                messageController.insertTextMessage(message, (err, recordId) => {
+                messageController.insertMessage(message, (err, recordId) => {
                     if (err) throw err;
                     const filePath = `${RESOURCE_PATH}/${userType}/${recordId}.wav`;
                     fs.writeFile(filePath, err => {
@@ -328,7 +328,7 @@ function attachIO(server): SocketIO.Server {
         socket.on(READ_MESSAGE, messageId => {
             if (!loginSuccess) return;
             if (!messageId || !messageId.length) return;
-            messageController.readTextMessage(messageId, (err, res) => {
+            messageController.readMessage(messageId, (err, res) => {
                 if (err) throw err;
             });
         });

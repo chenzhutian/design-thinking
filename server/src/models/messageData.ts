@@ -1,7 +1,7 @@
 import * as mongoose from 'mongoose';
 
 const messageDataSchema = new mongoose.Schema({
-    filePath: String,
+    content: String,
     roomName: String,
     userType: String,
     isRead: Boolean,

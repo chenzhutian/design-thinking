@@ -1,16 +1,7 @@
 import * as fs from 'fs';
 import MessageData from '../models/messageData';
-import TextMessageData from '../models/textMessageData';
 
 interface Message {
-    filePath: string,
-    roomName: string,
-    userType: string,
-    isRead: boolean,
-    isReceived: boolean,
-}
-
-interface TextMessage {
     content: string,
     roomName: string,
     userType: string,
@@ -25,19 +16,12 @@ function insertMessage(message: Message, callback: (err: any, res: {}) => void) 
     });
 }
 
-function insertTextMessage(message: TextMessage, callback: (err: any, res: {}) => void) {
-    const newMessage = new TextMessageData(message);
-    newMessage.save(err => {
-        callback(err, newMessage._id);
-    });
+function readMessage(id: string, callback: (err: any, res: {}) => void) {
+    MessageData.findByIdAndUpdate(id, { isRead: true }, callback);
 }
 
-function readTextMessage(id: string, callback: (err: any, res: {}) => void) {
-    TextMessageData.findByIdAndUpdate(id, { isRead: true }, callback);
-}
-
-function fetchUnReadTextMessage(targetType: string, callback: (err, res) => void) {
-    TextMessageData
+function fetchUnReadMessage(targetType: string, callback: (err, res) => void) {
+    MessageData
         .find({
             userType: targetType,
             isReceived: false
@@ -57,7 +41,6 @@ function fetchUnReadTextMessage(targetType: string, callback: (err, res) => void
 
 export default {
     insertMessage,
-    insertTextMessage,
-    readTextMessage,
-    fetchUnReadTextMessage,
+    readMessage,
+    fetchUnReadMessage,
 }
