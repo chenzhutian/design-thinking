@@ -50,7 +50,7 @@ class PiClient {
 
     private _sendOrPlayButton = new Gpio(22, 'in', 'falling');
     private _recordHandlerButton = new Gpio(27, 'in', 'both');
-    private _motor = new PWMGpio(17, { mode: PWMGpio.OUTPUT });
+    private _motor = new PWMGpio(23, { mode: PWMGpio.OUTPUT });
     private _motorPulseWidth: number = 2500;
     private _motorIncremental: number = 100;
     private _motorMoveTimeGap: number = 100;
