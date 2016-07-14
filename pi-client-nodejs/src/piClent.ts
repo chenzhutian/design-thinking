@@ -90,8 +90,6 @@ class PiClient {
             this._userType = res.userType;
             this._loginSuccess = true;
             console.log('loginSuccess');
-
-            this._socket.on(TEST_PI, msg => console.log(msg));
             // regist buttons
             this._sendOrPlayButton.watch((err, value) => {
                 if (err) throw err;

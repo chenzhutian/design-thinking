@@ -80,15 +80,15 @@ export default class MessageManager {
             if (this._recordSound) return;
             this._recordSound = new RecordSound({
                 destination_folder: SENT_MESSAGE_PATH,
-                filename: TEMP_RECORD_FILE
+                filename: TEMP_RECORD_FILE,
+                alsa_format: 'U8',
+                alsa_addn_args: ['-c1', '-r8000']
             });
             this._recordSound.on('complete', () => {
                 this._recordSound = null;
                 console.info('finish recording');
             });
-            console.info('ready to record');
             this._recordSound.record();
-            console.info('begin to record');
         } else {
             this._recordTimer = setTimeout(() => {
                 if (!this._recordSound) return;
@@ -100,7 +100,7 @@ export default class MessageManager {
     public sendOrPlayMesssage = () => {
         if (this._isPlaying || this._isRecording) return;
         let tempFileName = `${SENT_MESSAGE_PATH}/${TEMP_RECORD_FILE}`;
-        fs.access(tempFileName, fs.R_OK | fs.W_OK | fs.X_OK, err => {
+        fs.access(tempFileName, err => {
             if (err) {
                 // if no record file then play messages
                 console.log('unread message');
@@ -127,7 +127,6 @@ export default class MessageManager {
                     });
                     this._socket.emit(READ_MESSAGE, msg.id);
                     if (this._unReadMessages.length === 0) {
-                        console.info('emit empty unread_message');
                         this._eventManager.emit(MessageManager.EMPTY_UNREAD_MESSAGE);
                     }
                 } else {
@@ -145,13 +144,15 @@ export default class MessageManager {
                 }
             } else {
                 fs.readFile(tempFileName, (err, file) => {
-                    if (err) throw err;
+                    if (err) {
+                        console.error("read send file err");
+                        console.error(err);
+                        return;
+                    }
                     try {
+                        this._socket.emit(SEND_MESSAGE, { buffer: file });
                         const newFileName = `${SENT_MESSAGE_PATH}/sm${this._sentMessageFileList.length}.wav`;
                         this._sentMessageFileList.push(newFileName);
-                        console.log('now we want to send a file');
-                        console.log(file.length);
-                        this._socket.emit(SEND_MESSAGE, { content: '', buffer: file });
                         fs.rename(tempFileName, newFileName);
                     } catch (renameErr) {
                         console.error(renameErr);
@@ -169,7 +170,7 @@ export default class MessageManager {
                 fileName
             });
             fs.writeFile(fileName, message.buffer, err => {
-                if (err) throw err;
+                if (err) console.error(err);
             });
         }
     }
