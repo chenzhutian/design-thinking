@@ -66,8 +66,11 @@ function attachIO(server) {
             }
             userNameToUser[userName].album = socket.id;
             socket.join(roomName, joinRoomErr => {
-                if (joinRoomErr)
-                    throw joinRoomErr;
+                if (joinRoomErr) {
+                    console.error(joinRoomErr);
+                    socket.emit(eventType_js_1.LOGIN_RESULT, { state: false, info: 'join room failed' });
+                    return;
+                }
                 console.info('join room success');
                 socket.emit(eventType_js_1.LOGIN_RESULT, { state: true, info: 'login success', userType: userType });
                 loginSuccess = true;
@@ -188,26 +191,21 @@ function attachIO(server) {
         socket.on(eventType_js_1.SEND_MESSAGE, msg => {
             if (!loginSuccess)
                 return;
-            console.log('comme into send_message handler');
             const room = roomNameToRooms[roomName];
             if (!room)
                 return;
             const message = {
-                content: msg.buffer,
                 roomName: roomName,
                 userType: userType,
                 isRead: false,
                 isReceived: false,
             };
-            console.log('send message detect target in online');
             if (room[targetType] && room[targetType].vase) {
-                console.log(`${userType} try to insert message`);
                 messageController_1.default.insertMessage(message, (err, recordId) => {
                     if (err) {
                         console.error(err);
                         return;
                     }
-                    console.log(`${userType} try to send message`);
                     socket.in(roomName).emit(eventType_js_1.MESSAGE, { buffer: msg.buffer, id: recordId });
                     message.isReceived = true;
                     const filePath = `${RESOURCE_PATH}/${userType}/${recordId}.wav`;
@@ -224,8 +222,10 @@ function attachIO(server) {
             }
             else {
                 messageController_1.default.insertMessage(message, (err, recordId) => {
-                    if (err)
-                        throw err;
+                    if (err) {
+                        console.error(err);
+                        return;
+                    }
                     const filePath = `${RESOURCE_PATH}/${userType}/${recordId}.wav`;
                     fs.writeFile(filePath, msg.buffer, err => {
                         if (err) {
