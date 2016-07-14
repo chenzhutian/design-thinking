@@ -38,7 +38,6 @@ class PiClient {
                 this._userType = res.userType;
                 this._loginSuccess = true;
                 console.log('loginSuccess');
-                this._socket.on(eventType_js_1.TEST_PI, msg => console.log(msg));
                 this._sendOrPlayButton.watch((err, value) => {
                     if (err)
                         throw err;
