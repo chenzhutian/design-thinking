@@ -200,7 +200,7 @@ function attachIO(server) {
                 isReceived: false,
             };
             console.log('send message detect target in online');
-            if (room[targetType].vase) {
+            if (room[targetType] && room[targetType].vase) {
                 console.log(`${userType} try to insert message`);
                 messageController_1.default.insertMessage(message, (err, recordId) => {
                     if (err) {
