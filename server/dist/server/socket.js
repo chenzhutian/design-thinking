@@ -162,9 +162,6 @@ function attachIO(server) {
                 socket.emit(eventType_js_1.LOGIN_RESULT, { state: true, info: 'login success', userType: userType });
                 loginSuccess = true;
                 loginedVaseUser.add(userName);
-                setInterval(() => {
-                    socket.emit(eventType_js_1.TEST_PI, 'say Hi from server');
-                }, 5000);
                 messageController_1.default.fetchUnReadMessage(targetType, (err, messages) => {
                     if (err) {
                         console.error(err);
