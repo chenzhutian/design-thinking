@@ -2,7 +2,6 @@ import * as fs from 'fs';
 import MessageData from '../models/messageData';
 
 interface Message {
-    content: string,
     roomName: string,
     userType: string,
     isRead: boolean,
@@ -31,7 +30,7 @@ function fetchUnReadMessage(targetType: string, callback: (err, res) => void) {
             if (!err) {
                 for (let i = 0, len = messages.length; i < len; ++i) {
                     messages[i]['isReceived'] = true;
-                    contents.push({ content: messages[i]['content'], id: messages[i]['_id'] });
+                    contents.push({ id: messages[i]['_id'] });
                     messages[i].save();
                 }
             }
