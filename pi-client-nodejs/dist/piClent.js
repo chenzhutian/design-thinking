@@ -114,7 +114,7 @@ class PiClient {
         this._socket.on(eventType_js_1.DISCONNECT, this.onDisconnect);
         this._socket.on(eventType_js_1.LOGIN_RESULT, this.onLoginRes);
         this._socket.on(eventType_js_1.MESSAGE, this.closeFlower);
-        this._eventManager.on(messageManager_1.default.EMPTY_UNREAD_MESSAGE, this.closeFlower);
+        this._eventManager.on(messageManager_1.default.EMPTY_UNREAD_MESSAGE, this.openFlower);
     }
 }
 Object.defineProperty(exports, "__esModule", { value: true });

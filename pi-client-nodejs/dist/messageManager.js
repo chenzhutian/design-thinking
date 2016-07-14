@@ -31,8 +31,10 @@ class MessageManager {
                     if (!this._recordSound)
                         return;
                     this._recordSound.stop();
-                    this._recordSound = null;
-                    console.info('finish recording');
+                    this._recordSound.on('complete', () => {
+                        this._recordSound = null;
+                        console.info('finish recording');
+                    });
                 }, this._recordTimeoutGap);
             }
         };
@@ -59,10 +61,11 @@ class MessageManager {
                             throw err;
                         try {
                             const newFileName = `${SENT_MESSAGE_PATH}/sm${this._sentMessageFileList.length}.wav`;
-                            fs.rename(fileName, newFileName);
                             this._sentMessageFileList.push(newFileName);
                             console.log('now we want to send a file');
+                            console.log(file.length);
                             this._socket.emit(eventType_js_1.SEND_MESSAGE, { content: '', buffer: file });
+                            fs.rename(fileName, newFileName);
                         }
                         catch (renameErr) {
                             console.error(renameErr);
