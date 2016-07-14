@@ -309,7 +309,7 @@ function attachIO(server): SocketIO.Server {
                 isReceived: false,
             };
             console.log('send message detect target in online');
-            if (room[targetType].vase) {
+            if (room[targetType] && room[targetType].vase) {
                 // target is connected
                 console.log(`${userType} try to insert message`);
                 messageController.insertMessage(message, (err, recordId) => {
