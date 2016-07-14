@@ -14,10 +14,6 @@ width: `${100 /imagesCount}%`
             </div>
         </div>
     </div>
-    <!--<a class="left carousel-control "></a>
-    <a class="right carousel-control "></a>-->
-    <button @click="sendMessage">Send</button>
-    <button @click="readMessage">Listen</button>
     <ul id="messages">
         <li v-for="msg in unReadMessage">{{msg.content}}</li>
     </ul>

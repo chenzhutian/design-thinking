@@ -121,17 +121,10 @@ function attachIO(server): SocketIO.Server {
                     return;
                 }
                 console.info('join room success');
+                // emit login success
                 socket.emit(LOGIN_RESULT, { state: true, info: 'login success', userType });
                 loginSuccess = true;
                 loginedAlbumUser.add(userName);
-                /*
-                    messageController.fetchUnReadTextMessage(targetType, (err, messages) => {
-                        if (err) throw err;
-                        if (messages.length) {
-                            socket.emit(PUSH_UNREAD_MESSAGE, messages);
-                        }
-                    });
-                */
             });
         });
 
@@ -143,42 +136,6 @@ function attachIO(server): SocketIO.Server {
             }
         });
 
-        /*
-                // sendMessage
-                socket.on(SEND_MESSAGE, msg => {
-                    if (!loginSuccess) return;
-                    const room = roomNameToRooms[roomName];
-                    if (!room) return;
-                    const message = {
-                        content: msg,
-                        roomName,
-                        userType: userType,
-                        isRead: false,
-                        isReceived: false,
-                    };
-                    if (room[targetType].album) {
-                        // target is connected
-                        message.isReceived = true;
-                        messageController.insertTextMessage(message, (err, recordId) => {
-                            if (err) throw err;
-                            socket.in(roomName).emit(MESSAGE, { content: msg, id: recordId });
-                        });
-                    } else {
-                        messageController.insertTextMessage(message, err => {
-                            if (err) throw err;
-                        });
-                    }
-                });
-        
-                // read message
-                socket.on(READ_MESSAGE, messageId => {
-                    if (!loginSuccess) return;
-                    if (!messageId || !messageId.length) return;
-                    messageController.readTextMessage(messageId, (err, res) => {
-                        if (err) throw err;
-                    });
-                });
-        */
         socket.on('disconnect', () => {
             if (!loginSuccess) return;
             const room = roomNameToRooms[roomName];
@@ -266,14 +223,8 @@ function attachIO(server): SocketIO.Server {
                 console.info('join room success');
                 // emit login success
                 socket.emit(LOGIN_RESULT, { state: true, info: 'login success', userType });
-
                 loginSuccess = true;
                 loginedVaseUser.add(userName);
-
-                // for test
-                setInterval(() => {
-                    socket.emit(TEST_PI, 'say Hi from server');
-                }, 5000);
 
                 //fetch unread messsages
                 messageController.fetchUnReadMessage(targetType, (err, messages) => {

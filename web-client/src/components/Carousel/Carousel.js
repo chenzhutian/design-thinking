@@ -4,11 +4,11 @@ import Hammer from 'hammerjs';
 // event Type
 import {
     MOVE_SLIDES,
-    MESSAGE,
-    PUSH_UNREAD_MESSAGE,
+    // MESSAGE,
+    // PUSH_UNREAD_MESSAGE,
     DECAY,
-    READ_MESSAGE,
-    SEND_MESSAGE,
+    // READ_MESSAGE,
+    // SEND_MESSAGE,
 } from '../../eventType.js';
 
 export default {
@@ -38,8 +38,8 @@ export default {
         setData(images, userType, userName, socket) {
             this.socket = socket;
             this.socket.on(MOVE_SLIDES, this.setCurrentSlide);
-            this.socket.on(MESSAGE, this.receiveMessage);
-            this.socket.on(PUSH_UNREAD_MESSAGE, this.receiveUnReadMessage);
+            // this.socket.on(MESSAGE, this.receiveMessage);
+            // this.socket.on(PUSH_UNREAD_MESSAGE, this.receiveUnReadMessage);
             this.socket.on(DECAY, this.handleDecay);
 
             this.userType = userType;
@@ -63,22 +63,22 @@ export default {
                 // this.drawImagesToCanvas();
             });
         },
-        drawImagesToCanvas() {
-            this.images.forEach((image, index) => {
-                const canvas = this.$els.wraper.querySelector(`#canvas-${index}`);
-                const ctx = canvas.getContext('2d');
-                const img = new Image();
-                // drawing of the test image - img1
-                img.onload = () => {
-                    // draw background image
-                    ctx.drawImage(img, 0, 0);
-                    // draw a box over the top
-                    // ctx.fillStyle = 'rgba(200, 0, 0, 0.5)';
-                    ctx.fillRect(0, 0, 500, 500);
-                };
-                img.src = image.img;
-            });
-        },
+        // drawImagesToCanvas() {
+        //     this.images.forEach((image, index) => {
+        //         const canvas = this.$els.wraper.querySelector(`#canvas-${index}`);
+        //         const ctx = canvas.getContext('2d');
+        //         const img = new Image();
+        //         // drawing of the test image - img1
+        //         img.onload = () => {
+        //             // draw background image
+        //             ctx.drawImage(img, 0, 0);
+        //             // draw a box over the top
+        //             // ctx.fillStyle = 'rgba(200, 0, 0, 0.5)';
+        //             ctx.fillRect(0, 0, 500, 500);
+        //         };
+        //         img.src = image.img;
+        //     });
+        // },
         setCurrentSlide(index) {
             this.currentSlideIndex = index;
             this.carouselWraperStyle.left = `${-100 * this.currentSlideIndex}%`;
@@ -90,24 +90,24 @@ export default {
             });
             this.socket.emit(MOVE_SLIDES, index);
         },
-        sendMessage() {
-            this.socket.emit(SEND_MESSAGE, `this is a message ${Math.random()}`);
-        },
-        receiveMessage(message) {
-            if (message.id) {
-                this.imageComponentsStyle[4][1].opacity -= 0.1;
-                this.unReadMessage.push(message);
-            }
-        },
-        readMessage() {
-            this.imageComponentsStyle[4][1].opacity += 0.1;
-            const msg = this.unReadMessage.shift();
-            this.socket.emit(READ_MESSAGE, msg.id);
-        },
-        receiveUnReadMessage(messages) {
-            if (!messages) return;
-            messages.forEach(this.receiveMessage);
-        },
+        // sendMessage() {
+        //     this.socket.emit(SEND_MESSAGE, `this is a message ${Math.random()}`);
+        // },
+        // receiveMessage(message) {
+        //     if (message.id) {
+        //         this.imageComponentsStyle[4][1].opacity -= 0.1;
+        //         this.unReadMessage.push(message);
+        //     }
+        // },
+        // readMessage() {
+        //     this.imageComponentsStyle[4][1].opacity += 0.1;
+        //     const msg = this.unReadMessage.shift();
+        //     this.socket.emit(READ_MESSAGE, msg.id);
+        // },
+        // receiveUnReadMessage(messages) {
+        //     if (!messages) return;
+        //     messages.forEach(this.receiveMessage);
+        // },
         handleDecay(value) {
             console.log(value);
         },
