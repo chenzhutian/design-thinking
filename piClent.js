@@ -14,8 +14,7 @@ const ROOM_NAME = 'design-thinking';
 class PiClient {
     constructor(hostUrl, userName) {
         this._loginSuccess = false;
-        this._playButton = new Gpio(27, 'in', 'falling');
-        this._sentButton = new Gpio(22, 'in', 'falling');
+        this._sendOrPlayButton = new Gpio(22, 'in', 'falling');
         this._recordHandlerButton = new Gpio(18, 'in', 'both');
         this._motor = new PWMGpio(17, { mode: PWMGpio.OUTPUT });
         this._motorPulseWidth = 2500;
@@ -24,8 +23,7 @@ class PiClient {
         this.onDisconnect = () => {
             console.info('disconnect');
             this._socket.off(eventType_js_1.TEST_PI);
-            this._playButton.unwatch();
-            this._sentButton.unwatch();
+            this._sendOrPlayButton.unwatch();
             this._recordHandlerButton.unwatch();
         };
         this.onConnect = () => {
@@ -41,20 +39,12 @@ class PiClient {
                 this._loginSuccess = true;
                 console.log('loginSuccess');
                 this._socket.on(eventType_js_1.TEST_PI, msg => console.log(msg));
-                this._playButton.watch((err, value) => {
-                    if (err)
-                        throw err;
-                    console.log(`play ${value}`);
-                    if (value === 0) {
-                        this._messageManager.readMessage();
-                    }
-                });
-                this._sentButton.watch((err, value) => {
+                this._sendOrPlayButton.watch((err, value) => {
                     if (err)
                         throw err;
                     console.log(`sentButton ${value}`);
                     if (value === 0) {
-                        this._messageManager.sendMesssage();
+                        this._messageManager.sendOrPlayMesssage();
                     }
                 });
                 this._recordHandlerButton.watch((err, value) => {
@@ -101,8 +91,7 @@ class PiClient {
             }, this._motorMoveTimeGap);
         };
         this.clearAllGPIO = () => {
-            this._playButton.unexport();
-            this._sentButton.unexport();
+            this._sendOrPlayButton.unexport();
             this._recordHandlerButton.unexport();
             this._motor.servoWrite(0);
         };

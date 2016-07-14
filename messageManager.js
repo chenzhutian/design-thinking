@@ -37,25 +37,56 @@ class MessageManager {
                 }, this._recordTimeoutGap);
             }
         };
-        this.sendMesssage = () => {
-            if (this._isPlaying)
+        this.sendOrPlayMesssage = () => {
+            if (this._isPlaying || this._isRecording)
                 return;
-            fs.access(`${SENT_MESSAGE_PATH}/${TEMP_RECORD_FILE}`, err => {
+            let tempFileName = `${SENT_MESSAGE_PATH}/${TEMP_RECORD_FILE}`;
+            fs.access(tempFileName, fs.R_OK | fs.W_OK | fs.X_OK, err => {
                 if (err) {
-                    if (this._sentMessageFileList.length === 0)
-                        return;
-                    const fileName = this._sentMessageFileList.shift();
-                    const sound = new PlaySound(fileName);
-                    this._isPlaying = true;
-                    sound.play();
-                    sound.on('complete', () => {
-                        this._isPlaying = false;
-                    });
-                    this._sentMessageFileList.push(fileName);
+                    console.log('unread message');
+                    console.log(this._unReadMessages);
+                    if (this._unReadMessages.length) {
+                        const msg = this._unReadMessages.shift();
+                        const sound = new PlaySound(msg.fileName);
+                        this._isPlaying = true;
+                        sound.play();
+                        sound.on('complete', () => {
+                            const newFileName = `${RECEIVED_MESSAGE_PATH}/${msg.id}.wav`;
+                            try {
+                                fs.rename(msg.fileName, newFileName);
+                                this._readMessages.push({
+                                    id: msg.id,
+                                    fileName: newFileName
+                                });
+                            }
+                            catch (renameErr) {
+                                console.log(renameErr);
+                            }
+                            this._isPlaying = false;
+                        });
+                        this._socket.emit(eventType_js_1.READ_MESSAGE, msg.id);
+                        if (this._unReadMessages.length === 0) {
+                            console.info('emit empty unread_message');
+                            this._eventManager.emit(MessageManager.EMPTY_UNREAD_MESSAGE);
+                        }
+                    }
+                    else {
+                        console.log(this._readMessages);
+                        if (this._readMessages.length === 0)
+                            return;
+                        const msg = this._readMessages.shift();
+                        const sound = new PlaySound(msg.fileName);
+                        this._isPlaying = true;
+                        sound.play();
+                        sound.on('complete', () => {
+                            this._isPlaying = false;
+                            console.info('complete playing');
+                        });
+                        this._readMessages.push(msg);
+                    }
                 }
                 else {
-                    const fileName = `${SENT_MESSAGE_PATH}/${TEMP_RECORD_FILE}`;
-                    fs.readFile(fileName, (err, file) => {
+                    fs.readFile(tempFileName, (err, file) => {
                         if (err)
                             throw err;
                         try {
@@ -64,7 +95,7 @@ class MessageManager {
                             console.log('now we want to send a file');
                             console.log(file.length);
                             this._socket.emit(eventType_js_1.SEND_MESSAGE, { content: '', buffer: file });
-                            fs.rename(fileName, newFileName);
+                            fs.rename(tempFileName, newFileName);
                         }
                         catch (renameErr) {
                             console.error(renameErr);
@@ -75,15 +106,14 @@ class MessageManager {
         };
         this.receiveMessage = (message) => {
             if (message.id) {
-                this._unReadMessage.push({
-                    id: message.id,
-                    content: message.content
-                });
                 const fileName = `${RECEIVED_MESSAGE_PATH}/${message.id}-unread.wav`;
+                this._unReadMessages.push({
+                    id: message.id,
+                    fileName: fileName
+                });
                 fs.writeFile(fileName, message.buffer, err => {
                     if (err)
                         throw err;
-                    this._receivedMessageFileList.push(fileName);
                 });
             }
         };
@@ -92,50 +122,27 @@ class MessageManager {
                 return;
             messages.forEach(this.receiveMessage);
         };
-        this.readMessage = () => {
-            if (this._isPlaying)
-                return;
-            console.log('unread message');
-            console.log(this._unReadMessage);
-            if (this._unReadMessage.length) {
-                const msg = this._unReadMessage.shift();
-                const fileName = `${RECEIVED_MESSAGE_PATH}/${msg.id}-unread.wav`;
-                const sound = new PlaySound(fileName);
-                this._isPlaying = true;
-                sound.play();
-                sound.on('complete', () => {
-                    const newFileName = `${RECEIVED_MESSAGE_PATH}/${msg.id}.wav`;
-                    const fileIdx = this._receivedMessageFileList.indexOf(fileName);
-                    this._receivedMessageFileList[fileIdx] = newFileName;
-                    fs.rename(fileName, newFileName);
-                    this._isPlaying = false;
-                });
-                this._socket.emit(eventType_js_1.READ_MESSAGE, msg.id);
-                if (this._unReadMessage.length === 0) {
-                    console.info('emit empty unread_message');
-                    this._eventManager.emit(MessageManager.EMPTY_UNREAD_MESSAGE);
-                }
-            }
-            else {
-                console.log(this._receivedMessageFileList);
-                if (this._receivedMessageFileList.length === 0)
-                    return;
-                const fileName = this._receivedMessageFileList.shift();
-                const sound = new PlaySound(fileName);
-                this._isPlaying = true;
-                sound.play();
-                sound.on('complete', () => {
-                    this._isPlaying = false;
-                    console.info('complete playing');
-                });
-                this._receivedMessageFileList.push(fileName);
-            }
-        };
         this._socket = socket;
         this._eventManager = eventManager;
-        this._unReadMessage = [];
+        this._unReadMessages = [];
+        this._readMessages = [];
         fs.readdir(RECEIVED_MESSAGE_PATH, (err, files) => {
-            this._receivedMessageFileList = files.filter(file => file !== '.gitkeep').map(file => `${RECEIVED_MESSAGE_PATH}/${file}`);
+            const unReadMarkLength = '_unread.wav'.length;
+            const extLength = '.wav'.length;
+            files.filter(file => file !== '.gitkeep').forEach((fileName) => {
+                if (fileName.includes('unread')) {
+                    this._unReadMessages.push({
+                        id: fileName.slice(0, fileName.length - unReadMarkLength),
+                        fileName: `${RECEIVED_MESSAGE_PATH}/${fileName}`
+                    });
+                }
+                else {
+                    this._readMessages.push({
+                        id: fileName.slice(0, fileName.length - extLength),
+                        fileName: `${RECEIVED_MESSAGE_PATH}/${fileName}`
+                    });
+                }
+            });
         });
         fs.readdir(SENT_MESSAGE_PATH, (err, files) => {
             this._sentMessageFileList = files.filter(file => file !== '.gitkeep').map(file => `${SENT_MESSAGE_PATH}/${file}`);
