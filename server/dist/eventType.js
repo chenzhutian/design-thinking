@@ -1,6 +1,8 @@
 "use strict";
 const CONNECT = 'connect';
 exports.CONNECT = CONNECT;
+const DISCONNECT = 'disconnect';
+exports.DISCONNECT = DISCONNECT;
 const LOGIN = 'LOGIN';
 exports.LOGIN = LOGIN;
 const LOGIN_RESULT = 'LOGIN_RESULT';
