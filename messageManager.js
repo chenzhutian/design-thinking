@@ -21,7 +21,10 @@ class MessageManager {
                     destination_folder: SENT_MESSAGE_PATH,
                     filename: TEMP_RECORD_FILE
                 });
-                this._isRecording = true;
+                this._recordSound.on('complete', () => {
+                    this._recordSound = null;
+                    console.info('finish recording');
+                });
                 console.info('ready to record');
                 this._recordSound.record();
                 console.info('begin to record');
@@ -31,10 +34,6 @@ class MessageManager {
                     if (!this._recordSound)
                         return;
                     this._recordSound.stop();
-                    this._recordSound.on('complete', () => {
-                        this._recordSound = null;
-                        console.info('finish recording');
-                    });
                 }, this._recordTimeoutGap);
             }
         };
