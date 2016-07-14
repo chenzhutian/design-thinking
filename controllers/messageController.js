@@ -20,7 +20,7 @@ function fetchUnReadMessage(targetType, callback) {
         if (!err) {
             for (let i = 0, len = messages.length; i < len; ++i) {
                 messages[i]['isReceived'] = true;
-                contents.push({ content: messages[i]['content'], id: messages[i]['_id'] });
+                contents.push({ id: messages[i]['_id'] });
                 messages[i].save();
             }
         }

@@ -1,7 +1,6 @@
 "use strict";
 const mongoose = require('mongoose');
 const messageDataSchema = new mongoose.Schema({
-    content: String,
     roomName: String,
     userType: String,
     isRead: Boolean,
