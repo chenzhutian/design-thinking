@@ -48,8 +48,7 @@ class PiClient {
     private _messageManager: MessageManager;
     private _eventManager: NodeJS.EventEmitter;
 
-    private _playButton = new Gpio(27, 'in', 'falling');
-    private _sentButton = new Gpio(22, 'in', 'falling');
+    private _sendOrPlayButton = new Gpio(22, 'in', 'falling');
     private _recordHandlerButton = new Gpio(18, 'in', 'both');
     private _motor = new PWMGpio(17, { mode: PWMGpio.OUTPUT });
     private _motorPulseWidth: number = 2500;
@@ -74,8 +73,7 @@ class PiClient {
     private onDisconnect = ()=>{
         console.info('disconnect');
         this._socket.off(TEST_PI);
-        this._playButton.unwatch();
-        this._sentButton.unwatch();
+        this._sendOrPlayButton.unwatch();
         this._recordHandlerButton.unwatch();
     }
 
@@ -95,19 +93,11 @@ class PiClient {
 
             this._socket.on(TEST_PI, msg => console.log(msg));
             // regist buttons
-            this._playButton.watch((err, value) => {
-                if (err) throw err;
-                console.log(`play ${value}`);
-                if (value === 0) {
-                    this._messageManager.readMessage();
-                }
-            });
-
-            this._sentButton.watch((err, value) => {
+            this._sendOrPlayButton.watch((err, value) => {
                 if (err) throw err;
                 console.log(`sentButton ${value}`);
-                if (value === 0) { // TODO it should be 0
-                    this._messageManager.sendMesssage();
+                if (value === 0) {
+                    this._messageManager.sendOrPlayMesssage();
                 }
             });
 
@@ -156,8 +146,7 @@ class PiClient {
     }
 
     public clearAllGPIO = () => {
-        this._playButton.unexport();
-        this._sentButton.unexport();
+        this._sendOrPlayButton.unexport();
         this._recordHandlerButton.unexport();
         this._motor.servoWrite(0);
     }
