@@ -20,10 +20,12 @@ class Decay {
         const y = this._totalPassTime / this.HalfLifePeriod;
         const currentValue = Math.pow(0.5, y) * this._initValue;
         if (currentValue < this._HPFreduceThreshold) {
-            --this._halfLifePeriodFactor;
-            if (this._halfLifePeriodFactor < 1) {
-                this._halfLifePeriodFactor = 1;
-            }
+            // hack just for exhibit
+            this._totalPassTime = 0;
+            // --this._halfLifePeriodFactor;
+            // if (this._halfLifePeriodFactor < 1) {
+            //     this._halfLifePeriodFactor = 1;
+            // }
         }
         return currentValue;
     }
