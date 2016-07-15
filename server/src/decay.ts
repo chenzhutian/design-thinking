@@ -2,7 +2,7 @@ class Decay {
     // all time unit is ms
     private _initValue: number;              // N
     private _totalPassTime: number = 0;          // t
-    private _halfLifePeriodFactor: number = 60; //HPF
+    private _halfLifePeriodFactor: number = 30; //HPF
     private _HPFreduceThreshold: number;
 
     get HalfLifePeriod() {

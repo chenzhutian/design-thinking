@@ -69,14 +69,17 @@ function attachIO(server): SocketIO.Server {
             console.info(params);
             if (!params || !params.roomName || !params.userName) {
                 socket.emit(LOGIN_RESULT, { state: false, info: 'no login params' });
+                console.error('no login params');
                 return;
             }
             if (params.userName !== 'daddy' && params.userName !== "boy") {
                 socket.emit(LOGIN_RESULT, { state: false, info: 'wrong userName' });
+                console.error('wrong username');
                 return;
             }
             if (loginedAlbumUser.has(params.userName)) {
                 socket.emit(LOGIN_RESULT, { state: false, info: 'this user already login' });
+                console.error('this user already login');
                 return;
             }
 
@@ -342,7 +345,6 @@ function attachIO(server): SocketIO.Server {
     });
 
     const timer = setInterval(() => {
-        console.log(rooms);
         rooms.forEach(room => {
             const decayManager = room.decayManager;
             io.of(NS_ALBUM).in(room.roomName).emit(DECAY, decayManager.decayOnce(tickInterval));
