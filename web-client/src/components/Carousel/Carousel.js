@@ -37,6 +37,8 @@ export default {
     methods: {
         setData(images, userType, userName, socket) {
             this.socket = socket;
+            this.socket.off(MOVE_SLIDES);
+            this.socket.off(DECAY);
             this.socket.on(MOVE_SLIDES, this.setCurrentSlide);
             this.socket.on(DECAY, this.handleDecay);
 
@@ -71,24 +73,6 @@ export default {
             });
             this.socket.emit(MOVE_SLIDES, index);
         },
-        // sendMessage() {
-        //     this.socket.emit(SEND_MESSAGE, `this is a message ${Math.random()}`);
-        // },
-        // receiveMessage(message) {
-        //     if (message.id) {
-        //         this.imageComponentsStyle[4][1].opacity -= 0.1;
-        //         this.unReadMessage.push(message);
-        //     }
-        // },
-        // readMessage() {
-        //     this.imageComponentsStyle[4][1].opacity += 0.1;
-        //     const msg = this.unReadMessage.shift();
-        //     this.socket.emit(READ_MESSAGE, msg.id);
-        // },
-        // receiveUnReadMessage(messages) {
-        //     if (!messages) return;
-        //     messages.forEach(this.receiveMessage);
-        // },
         handleDecay(value) {
             console.log(value);
             this.imageComponentsStyle[0][0].opacity = value * 0.01;
