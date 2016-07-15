@@ -14,11 +14,10 @@ import {
     LOGIN_RESULT,
 } from '../../eventType.js';
 
-import image3 from '../../assets/f1.png';
-import image2 from '../../assets/f2.png';
-import image1 from '../../assets/f3.png';
-import image7 from '../../assets/7.jpg';
-import image8 from '../../assets/8.jpg';
+import image2 from '../../assets/f1.png';
+import image1 from '../../assets/f2.png';
+// import image7 from '../../assets/7.jpg';
+// import image8 from '../../assets/8.jpg';
 
 
 export default {
@@ -58,13 +57,13 @@ export default {
             userType: null,
             images: [
                 {
-                    components: [image1, image2, image3],
+                    components: [image1, image2],
                     msg: '',
                 },
-                {
-                    components: [image7, image8],
-                    msg: '',
-                },
+                // {
+                //     components: [image7, image8],
+                //     msg: '',
+                // },
             ],
         };
     },
