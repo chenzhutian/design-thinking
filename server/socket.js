@@ -197,6 +197,10 @@ function attachIO(server) {
                 isRead: false,
                 isReceived: false,
             };
+            if (userType === CHILD) {
+                room.decayManager.childSendMessage(30 * 1000);
+            }
+            room.decayManager.childReadMessage();
             if (room[targetType] && room[targetType].vase) {
                 messageController_1.default.insertMessage(message, (err, recordId) => {
                     if (err) {
@@ -241,6 +245,12 @@ function attachIO(server) {
                 return;
             if (!messageId || !messageId.length)
                 return;
+            const room = roomNameToRooms[roomName];
+            if (!room)
+                return;
+            if (userType === CHILD) {
+                room.decayManager.childReadMessage(30 * 1000);
+            }
             messageController_1.default.readMessage(messageId, (err, res) => {
                 if (err) {
                     console.error(err);
@@ -268,6 +278,7 @@ function attachIO(server) {
         });
     });
     const timer = setInterval(() => {
+        console.log(rooms);
         rooms.forEach(room => {
             const decayManager = room.decayManager;
             io.of(nameSpace_js_1.NS_ALBUM).in(room.roomName).emit(eventType_js_1.DECAY, decayManager.decayOnce(tickInterval));
