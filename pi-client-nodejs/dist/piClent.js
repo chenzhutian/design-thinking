@@ -39,16 +39,20 @@ class PiClient {
                 this._loginSuccess = true;
                 console.log('loginSuccess');
                 this._sendOrPlayButton.watch((err, value) => {
-                    if (err)
-                        throw err;
+                    if (err) {
+                        console.log(err);
+                        return;
+                    }
                     console.log(`sentButton ${value}`);
                     if (value === 0) {
                         this._messageManager.sendOrPlayMesssage();
                     }
                 });
                 this._recordHandlerButton.watch((err, value) => {
-                    if (err)
-                        throw err;
+                    if (err) {
+                        console.log(err);
+                        return;
+                    }
                     console.log(`recordHandler ${value}`);
                     if (value === 0) {
                         this._messageManager.recordMessage(true);
