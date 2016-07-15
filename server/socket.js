@@ -28,14 +28,17 @@ function attachIO(server) {
             console.info(params);
             if (!params || !params.roomName || !params.userName) {
                 socket.emit(eventType_js_1.LOGIN_RESULT, { state: false, info: 'no login params' });
+                console.error('no login params');
                 return;
             }
             if (params.userName !== 'daddy' && params.userName !== "boy") {
                 socket.emit(eventType_js_1.LOGIN_RESULT, { state: false, info: 'wrong userName' });
+                console.error('wrong username');
                 return;
             }
             if (loginedAlbumUser.has(params.userName)) {
                 socket.emit(eventType_js_1.LOGIN_RESULT, { state: false, info: 'this user already login' });
+                console.error('this user already login');
                 return;
             }
             userName = params.userName;
@@ -278,7 +281,6 @@ function attachIO(server) {
         });
     });
     const timer = setInterval(() => {
-        console.log(rooms);
         rooms.forEach(room => {
             const decayManager = room.decayManager;
             io.of(nameSpace_js_1.NS_ALBUM).in(room.roomName).emit(eventType_js_1.DECAY, decayManager.decayOnce(tickInterval));
