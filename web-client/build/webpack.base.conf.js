@@ -61,10 +61,10 @@ module.exports = {
                     name: 'fonts/[name].[hash:7].[ext]',
                 },
             },
-            {
-                test: require.resolve('material-design-lite/material.js'),
-                loader: 'exports?componentHandler',
-            },
+            // {
+            //     test: require.resolve('material-design-lite/material.js'),
+            //     loader: 'exports?componentHandler',
+            // },
         ],
     },
     vue: {

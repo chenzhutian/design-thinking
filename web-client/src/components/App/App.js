@@ -14,12 +14,12 @@ import {
     LOGIN_RESULT,
 } from '../../eventType.js';
 
-import image1 from '../../assets/1-min.jpg';
-import image2 from '../../assets/2-min.jpg';
-import image3 from '../../assets/3-min.jpg';
-import image4 from '../../assets/4-min.jpg';
-import image5 from '../../assets/5-min.jpg';
-import image6 from '../../assets/6-min.jpg';
+import image3 from '../../assets/f1.png';
+import image2 from '../../assets/f2.png';
+import image1 from '../../assets/f3.png';
+import image7 from '../../assets/7.jpg';
+import image8 from '../../assets/8.jpg';
+
 
 export default {
     ready() {
@@ -58,23 +58,11 @@ export default {
             userType: null,
             images: [
                 {
-                    components: [image1],
-                    msg: 'Craving for more thanately, you have FooPar Beta!',
+                    components: [image1, image2, image3],
+                    msg: '',
                 },
                 {
-                    components: [image2],
-                    msg: 'Try our catering ety of snacks and refreshments for functions',
-                },
-                {
-                    components: [image3],
-                    msg: 'Simply choose ion to avoid queues in the canteens',
-                },
-                {
-                    components: [image4],
-                    msg: "Anytime you feampus foods, don't hesitate to tell us.",
-                },
-                {
-                    components: [image6, image5],
+                    components: [image7, image8],
                     msg: '',
                 },
             ],

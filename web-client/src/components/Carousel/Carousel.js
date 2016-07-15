@@ -38,8 +38,6 @@ export default {
         setData(images, userType, userName, socket) {
             this.socket = socket;
             this.socket.on(MOVE_SLIDES, this.setCurrentSlide);
-            // this.socket.on(MESSAGE, this.receiveMessage);
-            // this.socket.on(PUSH_UNREAD_MESSAGE, this.receiveUnReadMessage);
             this.socket.on(DECAY, this.handleDecay);
 
             this.userType = userType;
@@ -50,8 +48,7 @@ export default {
                 image.components.forEach(componentSrc => {
                     componentStyle.push({
                         opacity: 1,
-                        backgroundImage: `radial-gradient(60% 60%, rgba(0, 0, 0, 0.6) 0%,
-                        rgba(0, 0, 0, 0) 95%), url(${componentSrc})`,
+                        backgroundImage: `url(${componentSrc})`,
                     });
                 });
                 this.imageComponentsStyle.push(componentStyle);
@@ -110,6 +107,7 @@ export default {
         // },
         handleDecay(value) {
             console.log(value);
+            this.imageComponentsStyle[0][0].opacity = value * 0.01;
         },
         hammerHandler(e) {
             switch (e.type) {
