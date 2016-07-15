@@ -23,8 +23,8 @@ interface LoginResult {
 
 const Gpio = onoff.Gpio;
 const PWMGpio = Pigpio.Gpio;
-const MOTOR_MAX_PULSEWIDTH = 2500;
-const MOTOR_MIN_PULSEWIDTH = 500;
+const MOTOR_MAX_PULSEWIDTH = 2000;
+const MOTOR_MIN_PULSEWIDTH = 900;
 const ROOM_NAME = 'design-thinking';
 
 class PiClient {
@@ -51,9 +51,9 @@ class PiClient {
     private _sendOrPlayButton = new Gpio(22, 'in', 'falling');
     private _recordHandlerButton = new Gpio(27, 'in', 'both');
     private _motor = new PWMGpio(23, { mode: PWMGpio.OUTPUT });
-    private _motorPulseWidth: number = 2500;
-    private _motorIncremental: number = 100;
-    private _motorMoveTimeGap: number = 100;
+    private _motorPulseWidth: number = 1100;
+    private _motorIncremental: number = 50;
+    private _motorMoveTimeGap: number = 200;
     private _motorTimer: NodeJS.Timer;
 
     constructor(hostUrl, userName) {
@@ -120,7 +120,7 @@ class PiClient {
     }
 
     private openFlower = () => {
-        // from 500 to 2500
+        // from 900 to 2000
         this._motorIncremental = this._motorIncremental > 0 ? this._motorIncremental : -this._motorIncremental;
         this._motorTimer = setInterval(() => {
             if (this._motorPulseWidth >= MOTOR_MAX_PULSEWIDTH) {
@@ -134,7 +134,7 @@ class PiClient {
     }
 
     private closeFlower = () => {
-        // from 2500 to 500
+        // from 2000 to 900
         console.log('try close the flower');
         this._motorIncremental = this._motorIncremental < 0 ? this._motorIncremental : -this._motorIncremental;
 
