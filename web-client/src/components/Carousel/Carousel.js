@@ -60,22 +60,6 @@ export default {
                 // this.drawImagesToCanvas();
             });
         },
-        // drawImagesToCanvas() {
-        //     this.images.forEach((image, index) => {
-        //         const canvas = this.$els.wraper.querySelector(`#canvas-${index}`);
-        //         const ctx = canvas.getContext('2d');
-        //         const img = new Image();
-        //         // drawing of the test image - img1
-        //         img.onload = () => {
-        //             // draw background image
-        //             ctx.drawImage(img, 0, 0);
-        //             // draw a box over the top
-        //             // ctx.fillStyle = 'rgba(200, 0, 0, 0.5)';
-        //             ctx.fillRect(0, 0, 500, 500);
-        //         };
-        //         img.src = image.img;
-        //     });
-        // },
         setCurrentSlide(index) {
             this.currentSlideIndex = index;
             this.carouselWraperStyle.left = `${-100 * this.currentSlideIndex}%`;

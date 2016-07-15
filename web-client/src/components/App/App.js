@@ -19,7 +19,6 @@ import image1 from '../../assets/f2.png';
 // import image7 from '../../assets/7.jpg';
 // import image8 from '../../assets/8.jpg';
 
-
 export default {
     ready() {
         this.socket = new IO(NS_ALBUM);

@@ -261,7 +261,7 @@ function attachIO(server): SocketIO.Server {
                 isRead: false,
                 isReceived: false,
             };
-            if(userType === CHILD){
+            if (userType === CHILD) {
                 room.decayManager.childSendMessage(30 * 1000);
             }
             room.decayManager.childReadMessage();
@@ -309,7 +309,7 @@ function attachIO(server): SocketIO.Server {
             if (!messageId || !messageId.length) return;
             const room = roomNameToRooms[roomName];
             if (!room) return;
-            if(userType === CHILD){
+            if (userType === CHILD) {
                 room.decayManager.childReadMessage(30 * 1000);
             }
             messageController.readMessage(messageId, (err, res) => {
@@ -346,7 +346,7 @@ function attachIO(server): SocketIO.Server {
         rooms.forEach(room => {
             const decayManager = room.decayManager;
             io.of(NS_ALBUM).in(room.roomName).emit(DECAY, decayManager.decayOnce(tickInterval));
-        })
+        });
     }, tickInterval);
 
     return io;
