@@ -8,8 +8,8 @@ const nameSpace_js_1 = require('./nameSpace.js');
 const eventType_js_1 = require('./eventType.js');
 const Gpio = onoff.Gpio;
 const PWMGpio = Pigpio.Gpio;
-const MOTOR_MAX_PULSEWIDTH = 2500;
-const MOTOR_MIN_PULSEWIDTH = 500;
+const MOTOR_MAX_PULSEWIDTH = 2000;
+const MOTOR_MIN_PULSEWIDTH = 900;
 const ROOM_NAME = 'design-thinking';
 class PiClient {
     constructor(hostUrl, userName) {
@@ -17,9 +17,9 @@ class PiClient {
         this._sendOrPlayButton = new Gpio(22, 'in', 'falling');
         this._recordHandlerButton = new Gpio(27, 'in', 'both');
         this._motor = new PWMGpio(23, { mode: PWMGpio.OUTPUT });
-        this._motorPulseWidth = 2500;
-        this._motorIncremental = 100;
-        this._motorMoveTimeGap = 100;
+        this._motorPulseWidth = 1100;
+        this._motorIncremental = 50;
+        this._motorMoveTimeGap = 200;
         this.onDisconnect = () => {
             console.info('disconnect');
             this._socket.off(eventType_js_1.TEST_PI);
