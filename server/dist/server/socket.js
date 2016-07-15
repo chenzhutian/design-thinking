@@ -283,7 +283,7 @@ function attachIO(server) {
     const timer = setInterval(() => {
         rooms.forEach(room => {
             const decayManager = room.decayManager;
-            io.of(nameSpace_js_1.NS_ALBUM).in(room.roomName).emit(eventType_js_1.DECAY, decayManager.decayOnce(tickInterval));
+            io.of(nameSpace_js_1.NS_ALBUM).to(room.child.album).emit(eventType_js_1.DECAY, decayManager.decayOnce(tickInterval));
         });
     }, tickInterval);
     return io;
