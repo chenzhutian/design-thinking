@@ -37,9 +37,9 @@ function attachIO(server) {
                 return;
             }
             if (loginedAlbumUser.has(params.userName)) {
-                socket.emit(eventType_js_1.LOGIN_RESULT, { state: false, info: 'this user already login' });
-                console.error('this user already login');
-                return;
+                const user = userNameToUser[params.userName];
+                io.sockets.connected[user.album].disconnect();
+                console.error('this user already login, but I just disconnect him');
             }
             userName = params.userName;
             roomName = params.roomName;
