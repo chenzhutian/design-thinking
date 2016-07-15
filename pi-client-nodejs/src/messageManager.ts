@@ -115,7 +115,7 @@ export default class MessageManager {
                         // rename
                         const newFileName = `${RECEIVED_MESSAGE_PATH}/${msg.id}.wav`;
                         try {
-                            fs.rename(msg.fileName, newFileName);
+                            fs.renameSync(msg.fileName, newFileName);
                             this._readMessages.push({
                                 id: msg.id,
                                 fileName: newFileName
@@ -153,7 +153,7 @@ export default class MessageManager {
                         this._socket.emit(SEND_MESSAGE, { buffer: file });
                         const newFileName = `${SENT_MESSAGE_PATH}/sm${this._sentMessageFileList.length}.wav`;
                         this._sentMessageFileList.push(newFileName);
-                        fs.rename(tempFileName, newFileName);
+                        fs.renameSync(tempFileName, newFileName);
                     } catch (renameErr) {
                         console.error(renameErr);
                     }

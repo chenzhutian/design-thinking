@@ -92,7 +92,10 @@ class PiClient {
             console.log('loginSuccess');
             // regist buttons
             this._sendOrPlayButton.watch((err, value) => {
-                if (err) throw err;
+                if (err) {
+                    console.log(err);
+                    return ;
+                }
                 console.log(`sentButton ${value}`);
                 if (value === 0) {
                     this._messageManager.sendOrPlayMesssage();
@@ -100,7 +103,10 @@ class PiClient {
             });
 
             this._recordHandlerButton.watch((err, value) => {
-                if (err) throw err;
+                if (err){
+                    console.log(err);
+                    return;
+                }
                 console.log(`recordHandler ${value}`);
                 if (value === 0) {
                     this._messageManager.recordMessage(true);
