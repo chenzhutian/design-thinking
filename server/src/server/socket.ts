@@ -348,6 +348,7 @@ function attachIO(server): SocketIO.Server {
 
     const timer = setInterval(() => {
         rooms.forEach(room => {
+            if(!room || !room.child || !room.child.album) return;
             const decayManager = room.decayManager;
             io.of(NS_ALBUM).to(room.child.album).emit(DECAY, decayManager.decayOnce(tickInterval));
         });
