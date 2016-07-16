@@ -267,7 +267,7 @@ function attachIO(server): SocketIO.Server {
                 isReceived: false,
             };
             if (userType === CHILD) {
-                room.decayManager.childSendMessage(30 * 1000);
+                room.decayManager.childSendMessage(10 * 1000);
             }
             console.log('send message try to detect targetType');
             if (room[targetType] && room[targetType].vase) {
@@ -316,7 +316,7 @@ function attachIO(server): SocketIO.Server {
             const room = roomNameToRooms[roomName];
             if (!room) return;
             if (userType === CHILD) {
-                room.decayManager.childReadMessage(30 * 1000);
+                room.decayManager.childReadMessage(10 * 1000);
             }
             messageController.readMessage(messageId, (err, res) => {
                 if (err) {
@@ -349,7 +349,7 @@ function attachIO(server): SocketIO.Server {
 
     const timer = setInterval(() => {
         rooms.forEach(room => {
-            if(!room || !room.child || !room.child.album) return;
+            if (!room || !room.child || !room.child.album) return;
             const decayManager = room.decayManager;
             io.of(NS_ALBUM).to(room.child.album).emit(DECAY, decayManager.decayOnce(tickInterval));
         });
