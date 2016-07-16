@@ -201,7 +201,7 @@ function attachIO(server) {
                 isReceived: false,
             };
             if (userType === CHILD) {
-                room.decayManager.childSendMessage(30 * 1000);
+                room.decayManager.childSendMessage(10 * 1000);
             }
             console.log('send message try to detect targetType');
             if (room[targetType] && room[targetType].vase) {
@@ -253,7 +253,7 @@ function attachIO(server) {
             if (!room)
                 return;
             if (userType === CHILD) {
-                room.decayManager.childReadMessage(30 * 1000);
+                room.decayManager.childReadMessage(10 * 1000);
             }
             messageController_1.default.readMessage(messageId, (err, res) => {
                 if (err) {

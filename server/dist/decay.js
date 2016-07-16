@@ -2,7 +2,7 @@
 class Decay {
     constructor(initValue) {
         this._totalPassTime = 0;
-        this._halfLifePeriodFactor = 30;
+        this._halfLifePeriodFactor = 20;
         this._initValue = initValue || 100;
         this._HPFreduceThreshold = this._initValue * 0.1;
     }
