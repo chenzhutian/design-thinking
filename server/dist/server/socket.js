@@ -38,7 +38,7 @@ function attachIO(server) {
             }
             if (loginedAlbumUser.has(params.userName)) {
                 const user = userNameToUser[params.userName];
-                io.sockets.connected[user.album].disconnect();
+                io.sockets.connected[user.album] && io.sockets.connected[user.album].disconnect();
                 console.error('this user already login, but I just disconnect him');
             }
             userName = params.userName;
@@ -203,8 +203,9 @@ function attachIO(server) {
             if (userType === CHILD) {
                 room.decayManager.childSendMessage(30 * 1000);
             }
-            room.decayManager.childReadMessage();
+            console.log('send message try to detect targetType');
             if (room[targetType] && room[targetType].vase) {
+                console.log('ready to insertMessage');
                 messageController_1.default.insertMessage(message, (err, recordId) => {
                     if (err) {
                         console.error(err);

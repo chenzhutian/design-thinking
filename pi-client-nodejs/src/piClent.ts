@@ -51,7 +51,7 @@ class PiClient {
     private _sendOrPlayButton = new Gpio(22, 'in', 'falling');
     private _recordHandlerButton = new Gpio(24, 'in', 'both');
     private _motor = new PWMGpio(23, { mode: PWMGpio.OUTPUT });
-    private _motorPulseWidth: number = 1100;
+    private _motorPulseWidth: number = 2000;
     private _motorIncremental: number = 50;
     private _motorMoveTimeGap: number = 200;
     private _motorTimer: NodeJS.Timer;

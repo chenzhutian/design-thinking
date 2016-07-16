@@ -79,7 +79,7 @@ function attachIO(server): SocketIO.Server {
             }
             if (loginedAlbumUser.has(params.userName)) {
                 const user = userNameToUser[params.userName];
-                io.sockets.connected[user.album].disconnect();
+                io.sockets.connected[user.album] && io.sockets.connected[user.album].disconnect();
                 // socket.emit(LOGIN_RESULT, { state: false, info: 'this user already login' });
                 console.error('this user already login, but I just disconnect him');
                 // return;
@@ -269,9 +269,10 @@ function attachIO(server): SocketIO.Server {
             if (userType === CHILD) {
                 room.decayManager.childSendMessage(30 * 1000);
             }
-            room.decayManager.childReadMessage();
+            console.log('send message try to detect targetType');
             if (room[targetType] && room[targetType].vase) {
                 // target is connected
+                console.log('ready to insertMessage');
                 messageController.insertMessage(message, (err, recordId) => {
                     if (err) {
                         console.error(err);
